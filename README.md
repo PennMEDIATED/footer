@@ -17,10 +17,6 @@ the eniac deploy target.
   (scoped under `.pm-footer`, all custom properties prefixed `--pm-*`)
   followed by the `<footer>` markup. This is the file you paste into
   the Divi Code module, in full.
-- **`preview.html`** — wraps `footer.html` in a bare HTML page with the
-  image `src`s pointed at `assets/` instead of the WordPress media
-  library, so you can open it straight in a browser to check changes
-  before they go anywhere near WordPress.
 - **`assets/`** — the two logo files used in the "Supported by" row
   (`knight-foundation-logo.png`, `upenn-logo-full.png`), copied from
   the `PennMEDIATED/home` repo so this repo doesn't depend on another
@@ -95,9 +91,13 @@ WordPress instance or on decisions outside this repo — search
 
 ## Previewing locally
 
-Open `preview.html` directly in a browser — no build step, no server
-needed. It's `footer.html` with the two image `src`s swapped to the
-local `assets/` copies.
+`footer.html` opens directly in a browser — no build step, no server
+needed — **once the two `REPLACE_WITH_WP_MEDIA_URL` image paths are
+swapped for real URLs** (see "Before you ship"). Until then, opening
+it locally will show broken-image icons where the Knight Foundation
+and Penn logos go; everything else in the layout will still render
+correctly, so that's usually enough to check spacing, copy, and
+responsive behavior.
 
 ## Updating
 
@@ -105,7 +105,7 @@ This footer is static by design, so most changes are a direct edit to
 `footer.html`:
 
 ```
-edit footer.html → open preview.html to check it → commit → push
+edit footer.html → open it in a browser to check it → commit → push
 → git pull on the eniac deploy target → re-paste into the Divi Code
 module if the change needs to reach the live module (Divi doesn't
 read this repo directly — see note below)
