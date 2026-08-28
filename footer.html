@@ -268,7 +268,13 @@
     max-width: 268px;
   }
 
-  .pm-footer__email {
+  /* Scoped as `.pm-footer__brand .pm-footer__email` (not just the one
+     class) so this beats the `.pm-footer a { color: inherit }` reset
+     above on specificity — a single-class selector ties with that
+     reset and loses on source order in some contexts (this is what
+     was making the email/icons render in whatever the surrounding
+     page's default text color is, instead of red/white). */
+  .pm-footer__brand .pm-footer__email {
     display: inline-block;
     font-family: var(--pm-f-sans);
     font-size: 12.8px;
@@ -285,7 +291,13 @@
     gap: 18px;
   }
 
-  .pm-footer__social-link {
+  /* Same specificity fix as .pm-footer__email above — scoped under
+     .pm-footer__social so it beats the `.pm-footer a { color:
+     inherit }` reset instead of tying with it. The icon SVGs use
+     fill="currentColor", so this is what was making them invisible
+     (rendering in the ambient/page text color) against the black
+     background. */
+  .pm-footer__social .pm-footer__social-link {
     display: flex;
     align-items: center;
     justify-content: center;
