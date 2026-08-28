@@ -49,7 +49,11 @@
     --pm-f-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
 
     --pm-max-w: 1440px;
-    --pm-pad-x: var(--pm-space-1000); /* 80px desktop side padding */
+    /* 40px side padding — per the Figma spec (every section's content
+       sits at left:40 on the 1440-wide frame), not home/about's 80px
+       page-level padding. The footer is its own component with its
+       own horizontal rhythm. */
+    --pm-pad-x: var(--pm-space-500);
 
     display: block;
     font-family: var(--pm-f-sans);
@@ -58,10 +62,10 @@
   }
 
   @media (max-width: 900px) {
-    .pm-footer { --pm-pad-x: var(--pm-space-400); } /* 32px */
+    .pm-footer { --pm-pad-x: var(--pm-space-300); } /* 24px */
   }
   @media (max-width: 480px) {
-    .pm-footer { --pm-pad-x: var(--pm-space-250); } /* 20px */
+    .pm-footer { --pm-pad-x: var(--pm-space-200); } /* 16px */
   }
 
   /* Fallback font load — the header/nav work (separate repo) should
@@ -97,7 +101,9 @@
      =================================================================== */
   .pm-footer__newsletter {
     background: var(--pm-c-gradient);
-    padding-block: var(--pm-space-800);
+    min-height: 161px;
+    display: flex;
+    align-items: center;
   }
 
   .pm-footer__newsletter-inner.pm-footer__inner {
@@ -115,17 +121,17 @@
     font-family: var(--pm-f-serif);
     font-size: 30px;
     font-weight: 700;
-    line-height: 1.3;
-    letter-spacing: -0.5px;
+    line-height: 41px;
+    letter-spacing: -0.544px;
     color: var(--pm-c-white);
-    margin-bottom: var(--pm-space-050);
+    margin-bottom: 0;
   }
 
   .pm-footer__newsletter-desc {
     font-family: var(--pm-f-sans);
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 300;
-    line-height: 1.5;
+    line-height: 19px;
     color: var(--pm-c-white);
   }
 
@@ -139,25 +145,25 @@
   .pm-footer__newsletter-input {
     width: 260px;
     max-width: 100%;
-    height: 48px;
-    padding-inline: var(--pm-space-200);
+    height: 39px;
+    padding-inline: 11px;
     background: var(--pm-c-white);
     border: 1px solid rgba(13, 13, 12, 0.15);
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--pm-c-dark);
   }
 
-  .pm-footer__newsletter-input::placeholder { color: var(--pm-c-gray); }
+  .pm-footer__newsletter-input::placeholder { color: #9ca3af; }
 
   .pm-footer__newsletter-submit {
-    height: 48px;
-    padding-inline: var(--pm-space-300);
+    width: 113px;
+    height: 39px;
     background: var(--pm-c-red);
     color: var(--pm-c-white);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.24px;
     border-radius: 4px;
     transition: opacity 0.15s;
     white-space: nowrap;
@@ -170,7 +176,10 @@
      =================================================================== */
   .pm-footer__supporters {
     background: var(--pm-c-white);
-    padding-block: var(--pm-space-400);
+    border-top: 1px solid rgba(13, 13, 12, 0.1);
+    min-height: 97px;
+    display: flex;
+    align-items: center;
   }
 
   .pm-footer__supporters-inner.pm-footer__inner {
@@ -178,17 +187,20 @@
     flex-wrap: wrap;
     align-items: center;
     row-gap: var(--pm-space-300);
-    column-gap: var(--pm-space-500);
   }
 
   .pm-footer__supporters-label {
     font-family: var(--pm-f-sans);
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 1.5px;
+    line-height: 14px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     color: var(--pm-c-dark);
     white-space: nowrap;
+    /* gap to the Knight logo — matches the Figma spacing, which isn't
+       a uniform gap across all three items (see next comment) */
+    margin-right: 56px;
   }
 
   .pm-footer__supporters-logo-link {
@@ -201,18 +213,29 @@
 
   .pm-footer__supporters-logo-link:hover { opacity: 0.75; }
 
-  .pm-footer__supporters-inner img.pm-footer__supporters-logo--knight { height: 28px; width: auto; max-width: none; }
-  .pm-footer__supporters-inner img.pm-footer__supporters-logo--upenn  { height: 40px; width: auto; max-width: none; }
+  /* Knight → Penn gap (74px) is wider than label → Knight (56px) in
+     the Figma file — reproduced with an explicit margin rather than
+     a single flex `gap` so both hold exactly. */
+  .pm-footer__supporters-logo-link + .pm-footer__supporters-logo-link {
+    margin-left: 74px;
+  }
+
+  .pm-footer__supporters-inner img.pm-footer__supporters-logo--knight { height: 33px; width: auto; max-width: none; }
+  .pm-footer__supporters-inner img.pm-footer__supporters-logo--upenn  { height: 55px; width: auto; max-width: none; }
 
   /* ===================================================================
      3. Main footer — dark band
      =================================================================== */
-  .pm-footer__main { background: var(--pm-c-dark); padding-top: var(--pm-space-800); }
+  .pm-footer__main {
+    background: var(--pm-c-dark);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 53px;
+  }
 
   .pm-footer__main-inner.pm-footer__inner {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--pm-space-800);
+    gap: var(--pm-space-600);
     padding-bottom: var(--pm-space-600);
   }
 
@@ -232,23 +255,24 @@
   }
 
   .pm-footer__logo-img {
-    height: 34px;
+    height: 43.59px;
     width: auto;
   }
 
   .pm-footer__tagline {
     font-family: var(--pm-f-sans);
-    font-size: 13px;
+    font-size: 12.8px;
     font-weight: 300;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.75);
-    max-width: 280px;
+    line-height: 22px;
+    color: var(--pm-c-white);
+    max-width: 268px;
   }
 
   .pm-footer__email {
     display: inline-block;
     font-family: var(--pm-f-sans);
-    font-size: 13px;
+    font-size: 12.8px;
+    line-height: 19px;
     color: var(--pm-c-red);
     transition: opacity 0.15s;
   }
@@ -258,7 +282,7 @@
   .pm-footer__social {
     display: flex;
     align-items: center;
-    gap: var(--pm-space-200);
+    gap: 18px;
   }
 
   .pm-footer__social-link {
@@ -271,39 +295,45 @@
   }
 
   .pm-footer__social-link:hover { opacity: 1; }
-  .pm-footer__social-link svg { width: 18px; height: 18px; }
+  .pm-footer__social-link svg { width: 23px; height: 23px; }
+  /* Bluesky's glyph sits in a tighter bounding box than the other
+     three marks — sized down to match, per the Figma spec, so all
+     four read as the same visual weight in the row. */
+  .pm-footer__social-link--bluesky svg { width: 16px; height: 16px; }
 
   /* -- nav columns -- */
   .pm-footer__nav {
     flex: 2 1 480px;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--pm-space-600) var(--pm-space-800);
+    gap: var(--pm-space-600);
   }
 
   .pm-footer__nav-col { flex: 1 1 160px; min-width: 160px; }
 
   .pm-footer__nav-heading {
     font-family: var(--pm-f-sans);
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 1.5px;
+    line-height: 14px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     color: var(--pm-c-white);
-    margin-bottom: var(--pm-space-250);
+    margin-bottom: 15px;
   }
 
   .pm-footer__nav-col ul {
     display: flex;
     flex-direction: column;
-    gap: var(--pm-space-200);
   }
 
   .pm-footer__nav-col a {
+    display: inline-block;
     font-family: var(--pm-f-sans);
-    font-size: 13px;
+    font-size: 12.8px;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.9);
+    line-height: 19px;
+    color: var(--pm-c-white);
     transition: opacity 0.15s;
   }
 
@@ -316,21 +346,16 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: var(--pm-space-200);
-    padding-block: var(--pm-space-250);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-block: 11px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .pm-footer__bottom-inner p {
     font-family: var(--pm-f-sans);
-    font-size: 11px;
+    font-size: 11.2px;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  /* -- bottom gradient bookend -- */
-  .pm-footer__gradient-bar {
-    height: 6px;
-    background: var(--pm-c-gradient);
+    line-height: 17px;
+    color: var(--pm-c-white);
   }
 
   .pm-footer__visually-hidden {
@@ -413,7 +438,7 @@
           <a href="https://www.youtube.com/@PennMEDIATED" target="_blank" rel="noopener" class="pm-footer__social-link" aria-label="YouTube">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg>
           </a>
-          <a href="https://bsky.app/profile/mediated.upenn.edu" target="_blank" rel="noopener" class="pm-footer__social-link" aria-label="Bluesky">
+          <a href="https://bsky.app/profile/mediated.upenn.edu" target="_blank" rel="noopener" class="pm-footer__social-link pm-footer__social-link--bluesky" aria-label="Bluesky">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 9.5C10.6 6.7 7.3 4.3 4.5 3.6c-1.3-.3-1.9.3-1.7 1.6.3 2 1.4 6.6 2.1 8.4.9 2.5 3.4 3.3 5.6 3-3.2.5-6 1.9-2.3 6 4 4.2 5.5-.9 6-2.6.5 1.7 1.7 6.6 5.9 2.6 3.5-3.5 1-5.5-2.3-6 2.2.3 4.7-.5 5.6-3 .7-1.8 1.8-6.4 2.1-8.4.2-1.3-.4-1.9-1.7-1.6-2.8.7-6.1 3.1-7.5 5.9Z"/></svg>
           </a>
           <a href="https://github.com/PennMEDIATED" target="_blank" rel="noopener" class="pm-footer__social-link" aria-label="GitHub">
@@ -472,7 +497,5 @@
       <p>University of Pennsylvania &middot; Philadelphia, PA</p>
     </div>
   </div>
-
-  <div class="pm-footer__gradient-bar" aria-hidden="true"></div>
 
 </footer>
