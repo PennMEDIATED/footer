@@ -17,11 +17,14 @@ the eniac deploy target.
   (scoped under `.pm-footer`, all custom properties prefixed `--pm-*`)
   followed by the `<footer>` markup. This is the file you paste into
   the Divi Code module, in full.
-- **`assets/`** — the two logo files used in the "Supported by" row
-  (`knight-foundation-logo.png`, `upenn-logo-full.png`), copied from
-  the `PennMEDIATED/home` repo so this repo doesn't depend on another
-  one at build time. Upload these to the WordPress media library as
-  part of installing the footer (see below).
+- **`assets/`** — three images: the Knight Foundation and Penn
+  "Supported by" logos (`knight-foundation-logo.png`,
+  `upenn-logo-full.png`, copied from the `PennMEDIATED/home` repo so
+  this repo doesn't depend on another one at build time), and the
+  brand lockup used in the footer's own logo
+  (`mediated-white-transparent.svg`). Upload all three to the
+  WordPress media library as part of installing the footer (see
+  below).
 
 ## Design system
 
@@ -61,11 +64,10 @@ A few things are placeholders because they depend on the live
 WordPress instance or on decisions outside this repo — search
 `footer.html` for these markers before installing:
 
-- **`REPLACE_WITH_WP_MEDIA_URL`** (2 occurrences) — the Knight
-  Foundation and Penn logos currently point at a placeholder path.
-  Upload `assets/knight-foundation-logo.png` and
-  `assets/upenn-logo-full.png` to the WordPress media library and
-  swap in the real URLs.
+- **`REPLACE_WITH_WP_MEDIA_URL`** (3 occurrences) — the Knight
+  Foundation logo, Penn logo, and the MEDIATED brand lockup all
+  point at a placeholder path. Upload the three files in `assets/`
+  to the WordPress media library and swap in the real URLs.
 - **Newsletter form action** — the subscribe form defaults to the
   same e2ma signup link the homepage already links out to
   (`https://signup.e2ma.net/signup/2017639/1984707/`), submitted as a
@@ -80,11 +82,6 @@ WordPress instance or on decisions outside this repo — search
   `Job Openings`, `Data & PennMAP`, `Grants`, `Events`) are best-guess
   slugs — the migration plan notes the page list is still growing, so
   confirm final paths on mediated.upenn.edu once that's settled.
-- **Logo mark** — the small crest icon next to "MEDIATED" is a
-  generic placeholder shield, not Penn's official mark (no source
-  asset for it was available while building this). The header/nav
-  work will need the same asset — reuse whatever lands there instead
-  of sourcing this one separately.
 - **Social links** — YouTube, Bluesky, GitHub, and LinkedIn URLs are
   filled in with the center's known handles; double-check each still
   resolves before launch.
@@ -92,12 +89,12 @@ WordPress instance or on decisions outside this repo — search
 ## Previewing locally
 
 `footer.html` opens directly in a browser — no build step, no server
-needed — **once the two `REPLACE_WITH_WP_MEDIA_URL` image paths are
+needed — **once the three `REPLACE_WITH_WP_MEDIA_URL` image paths are
 swapped for real URLs** (see "Before you ship"). Until then, opening
 it locally will show broken-image icons where the Knight Foundation
-and Penn logos go; everything else in the layout will still render
-correctly, so that's usually enough to check spacing, copy, and
-responsive behavior.
+logo, Penn logo, and the MEDIATED brand lockup go; everything else in
+the layout will still render correctly, so that's usually enough to
+check spacing, copy, and responsive behavior.
 
 ## Updating
 
