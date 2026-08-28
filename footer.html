@@ -135,30 +135,18 @@
     color: var(--pm-c-white);
   }
 
-  .pm-footer__newsletter-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--pm-space-150);
+  /* Scoped under .pm-footer__newsletter (not just the one class) for
+     the same reason as .pm-footer__brand .pm-footer__email above —
+     this is now an <a>, so a bare single-class selector would tie
+     with .pm-footer a { color: inherit } and risk picking up the
+     page's ambient text color instead of white. */
+  .pm-footer__newsletter .pm-footer__newsletter-submit {
     flex-shrink: 0;
-  }
-
-  .pm-footer__newsletter-input {
-    width: 260px;
-    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     height: 39px;
-    padding-inline: 11px;
-    background: var(--pm-c-white);
-    border: 1px solid rgba(13, 13, 12, 0.15);
-    border-radius: 4px;
-    font-size: 13px;
-    color: var(--pm-c-dark);
-  }
-
-  .pm-footer__newsletter-input::placeholder { color: #9ca3af; }
-
-  .pm-footer__newsletter-submit {
-    width: 113px;
-    height: 39px;
+    padding-inline: var(--pm-space-300);
     background: var(--pm-c-red);
     color: var(--pm-c-white);
     font-size: 12px;
@@ -370,17 +358,6 @@
     color: var(--pm-c-white);
   }
 
-  .pm-footer__visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
 </style>
 
 <footer class="pm-footer">
@@ -393,30 +370,12 @@
         <p class="pm-footer__newsletter-desc">Research updates, event announcements, and center news — delivered to your inbox.</p>
       </div>
 
-      <!--
-        Form action is a best-effort default pointing at the same
-        signup service the homepage links out to (e2ma). Confirm the
-        expected field name / embed code with whoever owns the
-        mailing list before launch — see README "Before you ship".
-      -->
-      <form
-        class="pm-footer__newsletter-form"
-        action="https://signup.e2ma.net/signup/2017639/1984707/"
-        method="get"
+      <a
+        class="pm-footer__newsletter-submit"
+        href="http://signup.e2ma.net/signup/2104021/1984707/"
         target="_blank"
         rel="noopener"
-      >
-        <label class="pm-footer__visually-hidden" for="pm-footer-email">Email address</label>
-        <input
-          id="pm-footer-email"
-          class="pm-footer__newsletter-input"
-          type="email"
-          name="email"
-          placeholder="your@email.com"
-          required
-        >
-        <button type="submit" class="pm-footer__newsletter-submit">Subscribe</button>
-      </form>
+      >Subscribe to Our Newsletter</a>
     </div>
   </section>
 

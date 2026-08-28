@@ -68,13 +68,6 @@ WordPress instance or on decisions outside this repo — search
   Foundation logo, Penn logo, and the MEDIATED brand lockup all
   point at a placeholder path. Upload the three files in `assets/`
   to the WordPress media library and swap in the real URLs.
-- **Newsletter form action** — the subscribe form defaults to the
-  same e2ma signup link the homepage already links out to
-  (`https://signup.e2ma.net/signup/2017639/1984707/`), submitted as a
-  GET with an `email` field. This is a best-effort default, not a
-  confirmed integration — verify the field name against e2ma's actual
-  form (or swap in whatever embed/plugin the team settles on) before
-  launch.
 - **Nav link slugs** — `LLM Civic Discourse`, `Compendium` (→
   `/research-compendium/`), `About`, and `Affiliated Faculty` (→
   `/faculty/`) use paths confirmed live on infodem.upenn.edu today.
