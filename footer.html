@@ -294,12 +294,35 @@
     transition: opacity 0.15s;
   }
 
-  .pm-footer__social-link:hover { opacity: 1; }
-  .pm-footer__social-link svg { width: 23px; height: 23px; }
+  .pm-footer__social-link svg { width: 23px; height: 23px; transition: fill 0.15s; }
   /* Bluesky's glyph sits in a tighter bounding box than the other
      three marks — sized down to match, per the Figma spec, so all
      four read as the same visual weight in the row. */
   .pm-footer__social-link--bluesky svg { width: 16px; height: 16px; }
+
+  /* Hover/focus: flash-cycle through the brand gradient's own two
+     stops (purple → red-orange → purple, looping) instead of just a
+     static color swap. Icons use fill="currentColor", so animating
+     `color` animates the glyph directly — no gradient-fill/mask
+     trickery needed. */
+  @keyframes pm-social-flash {
+    0%, 100% { color: var(--pm-c-accent); }
+    50% { color: #df3611; }
+  }
+
+  .pm-footer__social .pm-footer__social-link:hover,
+  .pm-footer__social .pm-footer__social-link:focus-visible {
+    opacity: 1;
+    animation: pm-social-flash 1s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pm-footer__social .pm-footer__social-link:hover,
+    .pm-footer__social .pm-footer__social-link:focus-visible {
+      animation: none;
+      color: var(--pm-c-accent);
+    }
+  }
 
   /* -- nav columns -- */
   .pm-footer__nav {
@@ -409,7 +432,7 @@
           <a href="https://www.youtube.com/@PennMEDIATED" target="_blank" rel="noopener" class="pm-footer__social-link" aria-label="YouTube">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg>
           </a>
-          <a href="https://bsky.app/profile/mediated.upenn.edu" target="_blank" rel="noopener" class="pm-footer__social-link pm-footer__social-link--bluesky" aria-label="Bluesky">
+          <a href="https://bsky.app/profile/penn-mediated.bsky.social" target="_blank" rel="noopener" class="pm-footer__social-link pm-footer__social-link--bluesky" aria-label="Bluesky">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 9.5C10.6 6.7 7.3 4.3 4.5 3.6c-1.3-.3-1.9.3-1.7 1.6.3 2 1.4 6.6 2.1 8.4.9 2.5 3.4 3.3 5.6 3-3.2.5-6 1.9-2.3 6 4 4.2 5.5-.9 6-2.6.5 1.7 1.7 6.6 5.9 2.6 3.5-3.5 1-5.5-2.3-6 2.2.3 4.7-.5 5.6-3 .7-1.8 1.8-6.4 2.1-8.4.2-1.3-.4-1.9-1.7-1.6-2.8.7-6.1 3.1-7.5 5.9Z"/></svg>
           </a>
           <a href="https://github.com/PennMEDIATED" target="_blank" rel="noopener" class="pm-footer__social-link" aria-label="GitHub">

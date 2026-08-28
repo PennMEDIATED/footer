@@ -75,8 +75,9 @@ WordPress instance or on decisions outside this repo — search
   `Job Openings`, `Data & PennMAP`, `Grants`, `Events`) are best-guess
   slugs — the migration plan notes the page list is still growing, so
   confirm final paths on mediated.upenn.edu once that's settled.
-- **Social links** — YouTube, Bluesky, GitHub, and LinkedIn URLs are
-  filled in with the center's known handles; double-check each still
+- **Social links** — Bluesky is confirmed (`@penn-mediated.bsky.social`).
+  YouTube, GitHub, and LinkedIn are filled in with the center's known
+  handles but not independently confirmed; double-check each still
   resolves before launch.
 
 ## Previewing locally
