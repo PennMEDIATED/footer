@@ -390,22 +390,36 @@
      it needs to out-specificity the `.pm-footer img { height: auto }`
      reset above. */
   .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--knight {
-    height: 16px; width: auto; max-width: none;
-    /* The Knight logo's own artwork is black icon + black wordmark —
-       invisible on this dark background. brightness(0) invert(1)
-       flattens it to a solid-white silhouette (alpha/transparency is
-       preserved, only the artwork's own color is discarded). */
-    filter: brightness(0) invert(1);
+    height: 24px; width: auto; max-width: none;
+    /* KF.avif's real pixels: a black square icon with the "KF"
+       letterforms cut out in white, plus a black "KNIGHT FOUNDATION"
+       wordmark — both on a transparent background (confirmed by
+       sampling the decoded image directly, not just eyeballing a
+       screenshot). Two problems with brightness(0) invert(1) here:
+       it's invisible unfiltered (black art on this near-black
+       background), but inverting flattens the icon's OWN black-vs-
+       white contrast along with the transparency — square and letter
+       both end up the same white, so the "KF" mark disappears into a
+       blank white blob (the wordmark text survives fine since it's
+       single-tone, but the icon doesn't).
+       Fix: keep the artwork's real colors and give it a small white
+       card to sit on, the standard way to run a black/colored partner
+       logo on a dark background when no reversed export exists. This
+       preserves the icon's internal contrast instead of destroying
+       it. Padding is sized so the logo itself renders at the same
+       ~16px it was before, inside a 24px-tall chip matching the Penn
+       logo's height. Swap this for a plain height rule (see Penn
+       below) if Knight ever provides a proper white/reversed asset. */
+    background: var(--pm-c-white);
+    padding: 4px 8px;
+    border-radius: 3px;
   }
   .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--upenn {
     height: 24px; width: auto; max-width: none;
-    /* No filter here, unlike Knight above — "center-reverse-logo" is
-       a purpose-built white/light export made for a dark background
-       like this one, not the same navy-on-transparent file used
-       elsewhere on the site, so it should render as exported. If it
-       still doesn't read clearly once this is live, add
-       `filter: brightness(0) invert(1);` here to match the Knight
-       treatment. */
+    /* No filter here either — "center-reverse-logo" is a purpose-built
+       white/light export made for a dark background like this one,
+       not the same navy-on-transparent file used elsewhere on the
+       site, so it renders as exported. Confirmed correct. */
   }
 
 </style>
