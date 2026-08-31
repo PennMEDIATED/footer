@@ -1,9 +1,10 @@
 # Penn MEDIATED — Global Footer
 
 Hand-coded HTML/CSS for the sitewide footer on the new mediated.upenn.edu
-WordPress site. Per the migration plan, this is installed as a **Divi
-Theme Builder Code module**, assigned globally, replacing Divi's default
-drag-and-drop footer everywhere on the site.
+WordPress site. This is a **basic WordPress install — no Divi or other
+page builder** — so the footer isn't a builder module; it's a static
+snippet that gets installed sitewide by one of a few methods (see
+"Installing in WordPress" below).
 
 Footers are mostly static (links, social icons, copyright), so — unlike
 the header/nav, which stays wired to WordPress's native menu system for
@@ -15,8 +16,9 @@ the eniac deploy target.
 
 - **`index.html`** — the deployable snippet. A single `<style>` block
   (scoped under `.pm-footer`, all custom properties prefixed `--pm-*`)
-  followed by the `<footer>` markup. This is the file you paste into
-  the Divi Code module, in full.
+  followed by the `<footer>` markup. This is the file's entire
+  contents you install sitewide, however that ends up happening (see
+  "Installing in WordPress" below).
 - **`assets/`** — reference/backup copies of the three logo images
   (`knight-foundation-logo.png`, `upenn-logo-full.png`,
   `mediated-white-transparent.svg`). `index.html` itself doesn't
@@ -46,16 +48,30 @@ If a token changes in `home`'s style guide, update it here too — these
 are duplicated, not shared, across repos (same discipline `home` and
 `about` already use with each other).
 
-## Installing in Divi
+## Installing in WordPress
 
-1. **Theme Builder → Global (Default Website Template) → Footer area
-   → add a Code module.**
-2. Paste the **entire contents of `index.html`** into that module
-   (style block and all — Divi Code modules render raw HTML as-is).
-3. Assign the template scope so it applies sitewide, the same way
-   Divi's old default footer was scoped.
-4. Confirm the "Before you ship" items below, then preview a real
-   page.
+No page builder here, so `index.html` doesn't drop into a module —
+its contents (style block and all) need to render sitewide via
+whichever of these ends up being used. Not settled yet; pick one:
+
+- **`wp_footer` hook** — a few lines of PHP that echo this file's
+  contents into the `wp_footer` action, placed in a small mu-plugin
+  (`wp-content/mu-plugins/`) or the active child theme's
+  `functions.php`. Most durable option: works with any theme, no
+  extra plugin, and (if it's an mu-plugin) survives theme switches
+  and updates. Slightly more setup than the alternatives below.
+- **Code-snippets plugin** (e.g. WPCode, Insert Headers and Footers)
+  — paste `index.html`'s contents into a snippet scoped to "footer."
+  No PHP file to touch, but adds a plugin dependency.
+- **Directly in the theme's `footer.php`** — paste the markup into
+  the template. Fastest to wire up, but only safe in a *child*
+  theme — a parent-theme update overwrites it otherwise.
+- **Footer widget area** — only an option if the current theme
+  actually exposes one; many minimal/basic themes don't. If it does,
+  a Custom HTML widget there works too.
+
+Whichever is chosen, confirm the "Before you ship" items below, then
+preview a real page.
 
 ## Before you ship
 
@@ -97,16 +113,19 @@ This footer is static by design, so most changes are a direct edit to
 
 ```
 edit index.html → open it in a browser to check it → commit → push
-→ git pull on the eniac deploy target → re-paste into the Divi Code
-module if the change needs to reach the live module (Divi doesn't
-read this repo directly — see note below)
+→ git pull on the eniac deploy target → re-apply wherever this is
+installed, if the change needs to reach the live site (see note
+below)
 ```
 
-**Note on deploy:** Divi's Code module stores whatever HTML was pasted
-into it inside the WordPress database, not a file on disk — `git pull`
-updates the *repo* on eniac, but someone still has to copy the updated
-`index.html` into the Theme Builder module in wp-admin for a change
-to actually go live. If that becomes a frequent enough workflow to be
-annoying, the phased plan's "future upgrade path" (push-to-deploy via
-a `post-receive` hook, or a small mu-plugin that reads this file
-directly instead of a hand-pasted Code module) is worth revisiting.
+**Note on deploy:** whether `git pull` alone is enough to go live
+depends on which install method gets picked (see "Installing in
+WordPress"). If it's the `wp_footer` mu-plugin reading straight from
+this repo's checked-out files, `git pull` on eniac *is* the deploy —
+nothing else to do. If it's a code-snippets plugin or a hand-pasted
+`footer.php`, WordPress is storing its own separate copy (database or
+theme file), so `git pull` only updates the *repo* — someone still
+has to copy the updated `index.html` into that plugin/template for
+the change to actually go live. Worth deciding the install method
+partly on this: the mu-plugin option is the only one of the four
+where a `git pull` is a real deploy on its own.

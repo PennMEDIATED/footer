@@ -1,17 +1,16 @@
 <!--
   Penn MEDIATED — Global Site Footer
   ===================================================================
-  Divi Theme Builder installation:
-    1. Theme Builder → Global (or the "Default Website Template") →
-       Footer area → add a Code module.
-    2. Paste this entire file's contents into that Code module.
-    3. Assign the template to "All Pages" (or however the current
-       Divi default footer is scoped) so this replaces Divi's
-       drag-and-drop footer sitewide.
+  This is a plain WordPress site (no Divi/page builder) — install by
+  echoing this file's contents into the `wp_footer` hook (via a small
+  mu-plugin or the child theme's functions.php), pasting it into a
+  code-snippets plugin set to run in the footer, or putting it
+  directly in the theme's footer.php. See README.md "Installing in
+  WordPress" for the tradeoffs; pick one and this doc can be updated
+  to match once that's settled.
 
-  Before going live, resolve every REPLACE_WITH_* marker below
-  (image URLs point at WordPress media-library files that don't
-  exist until this is installed — see README.md "Before you ship").
+  Before going live, confirm every item under README.md "Before you
+  ship" (nav links, pending pages, social URLs).
 
   Design tokens (colors, type, spacing, the brand gradient) are
   pulled from the PennMEDIATED/home repo's shared style guide so
@@ -22,7 +21,7 @@
   /* ===================================================================
      Design tokens — mirrors PennMEDIATED/home's :root block. Scoped
      under .pm-footer instead of :root so this can't leak into (or be
-     overridden by) Divi's own global custom-property usage.
+     overridden by) the theme's own global custom-property usage.
      =================================================================== */
   .pm-footer {
     --pm-space-050:  4px;
@@ -74,7 +73,7 @@
      yet. Safe to delete once the real enqueue is confirmed live. */
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=EB+Garamond:ital,wght@0,400;0,600;0,700&display=swap');
 
-  /* Reset the handful of elements Divi/WP themes tend to re-style
+  /* Reset the handful of elements WP themes tend to re-style
      with their own global CSS, scoped to this footer only. */
   .pm-footer, .pm-footer *, .pm-footer *::before, .pm-footer *::after {
     box-sizing: border-box;
