@@ -13,13 +13,13 @@ the eniac deploy target.
 
 ## What's in this repo
 
-- **`footer.html`** — the deployable snippet. A single `<style>` block
+- **`index.html`** — the deployable snippet. A single `<style>` block
   (scoped under `.pm-footer`, all custom properties prefixed `--pm-*`)
   followed by the `<footer>` markup. This is the file you paste into
   the Divi Code module, in full.
 - **`assets/`** — reference/backup copies of the three logo images
   (`knight-foundation-logo.png`, `upenn-logo-full.png`,
-  `mediated-white-transparent.svg`). `footer.html` itself doesn't
+  `mediated-white-transparent.svg`). `index.html` itself doesn't
   read from this folder — its `<img>` tags point directly at the real
   WordPress media-library URLs (all three images are already uploaded
   and live). Keep this folder in sync if any of the three images gets
@@ -50,7 +50,7 @@ are duplicated, not shared, across repos (same discipline `home` and
 
 1. **Theme Builder → Global (Default Website Template) → Footer area
    → add a Code module.**
-2. Paste the **entire contents of `footer.html`** into that module
+2. Paste the **entire contents of `index.html`** into that module
    (style block and all — Divi Code modules render raw HTML as-is).
 3. Assign the template scope so it applies sitewide, the same way
    Divi's old default footer was scoped.
@@ -61,7 +61,7 @@ are duplicated, not shared, across repos (same discipline `home` and
 
 A few things are placeholders because they depend on the live
 WordPress instance or on decisions outside this repo — search
-`footer.html` for these markers before installing:
+`index.html` for these markers before installing:
 
 - **Nav link slugs** — every real link in the three nav columns is
   confirmed live on infodem.upenn.edu today (`/research-compendium/`,
@@ -75,14 +75,14 @@ WordPress instance or on decisions outside this repo — search
   (Resources) don't have pages yet, so they're rendered as plain
   `<span class="pm-footer__nav-pending">` text instead of dead links.
   Once each page exists, swap its `<span>` for an `<a href="...">` in
-  `footer.html` (same list markup, just change the tag) — search for
+  `index.html` (same list markup, just change the tag) — search for
   `pm-footer__nav-pending` to find both.
 - **Social links** — all four (YouTube, Bluesky, GitHub, LinkedIn) are
   confirmed handles/URLs.
 
 ## Previewing locally
 
-`footer.html` opens directly in a browser — no build step, no server
+`index.html` opens directly in a browser — no build step, no server
 needed. Its three `<img>` tags point at live WordPress media-library
 URLs (`infodem.upenn.edu/wp-content/uploads/...`), so a local preview
 needs network access to load them; if you're offline, or those files
@@ -93,10 +93,10 @@ without network.
 ## Updating
 
 This footer is static by design, so most changes are a direct edit to
-`footer.html`:
+`index.html`:
 
 ```
-edit footer.html → open it in a browser to check it → commit → push
+edit index.html → open it in a browser to check it → commit → push
 → git pull on the eniac deploy target → re-paste into the Divi Code
 module if the change needs to reach the live module (Divi doesn't
 read this repo directly — see note below)
@@ -105,7 +105,7 @@ read this repo directly — see note below)
 **Note on deploy:** Divi's Code module stores whatever HTML was pasted
 into it inside the WordPress database, not a file on disk — `git pull`
 updates the *repo* on eniac, but someone still has to copy the updated
-`footer.html` into the Theme Builder module in wp-admin for a change
+`index.html` into the Theme Builder module in wp-admin for a change
 to actually go live. If that becomes a frequent enough workflow to be
 annoying, the phased plan's "future upgrade path" (push-to-deploy via
 a `post-receive` hook, or a small mu-plugin that reads this file
