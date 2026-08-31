@@ -17,17 +17,13 @@ the eniac deploy target.
   (scoped under `.pm-footer`, all custom properties prefixed `--pm-*`)
   followed by the `<footer>` markup. This is the file you paste into
   the Divi Code module, in full.
-- **`assets/`** — three images: the Knight Foundation and Penn
-  "Supported by" logos (`knight-foundation-logo.png`,
-  `upenn-logo-full.png`, copied from the `PennMEDIATED/home` repo so
-  this repo doesn't depend on another one at build time), and the
-  brand lockup used in the footer's own logo
-  (`mediated-white-transparent.svg`). Upload all three to the
-  WordPress media library as part of installing the footer (see
-  below). The Knight/Penn PNGs carry their own baked-in black/navy
-  color — they live in the bottom bar now (bottom-right, next to
-  "Supported by"), rendered white with a `brightness(0) invert(1)`
-  CSS filter rather than needing separate white exports.
+- **`assets/`** — reference/backup copies of the three logo images
+  (`knight-foundation-logo.png`, `upenn-logo-full.png`,
+  `mediated-white-transparent.svg`). `footer.html` itself doesn't
+  read from this folder — its `<img>` tags point directly at the real
+  WordPress media-library URLs (all three images are already uploaded
+  and live). Keep this folder in sync if any of the three images gets
+  re-exported or re-uploaded to a new URL.
 
 ## Design system
 
@@ -67,10 +63,6 @@ A few things are placeholders because they depend on the live
 WordPress instance or on decisions outside this repo — search
 `footer.html` for these markers before installing:
 
-- **`REPLACE_WITH_WP_MEDIA_URL`** (3 occurrences) — the Knight
-  Foundation logo, Penn logo, and the MEDIATED brand lockup all
-  point at a placeholder path. Upload the three files in `assets/`
-  to the WordPress media library and swap in the real URLs.
 - **Nav link slugs** — every real link in the three nav columns is
   confirmed live on infodem.upenn.edu today (`/research-compendium/`,
   `/llm-civic-discourse/`, `/grants/`, `/about/`, `/team/`,
@@ -91,12 +83,12 @@ WordPress instance or on decisions outside this repo — search
 ## Previewing locally
 
 `footer.html` opens directly in a browser — no build step, no server
-needed — **once the three `REPLACE_WITH_WP_MEDIA_URL` image paths are
-swapped for real URLs** (see "Before you ship"). Until then, opening
-it locally will show broken-image icons where the Knight Foundation
-logo, Penn logo, and the MEDIATED brand lockup go; everything else in
-the layout will still render correctly, so that's usually enough to
-check spacing, copy, and responsive behavior.
+needed. Its three `<img>` tags point at live WordPress media-library
+URLs (`infodem.upenn.edu/wp-content/uploads/...`), so a local preview
+needs network access to load them; if you're offline, or those files
+ever move, the local copies in `assets/` are there as a fallback —
+swap the `src` values back to `assets/...` temporarily to check layout
+without network.
 
 ## Updating
 

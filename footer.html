@@ -385,24 +385,27 @@
 
   .pm-footer__bottom-supporters-logo-link:hover { opacity: 1; }
 
-  /* The Knight/Penn PNGs carry their own baked-in black/navy color,
-     invisible on this dark background — brightness(0) invert(1)
-     flattens each logo to a solid-white silhouette (alpha/transparency
-     is preserved, only the artwork's own color is discarded), which
-     is the standard trick for dropping an arbitrary brand mark onto a
-     dark strip like this without needing a separate white export.
-     Sizing is chained (link > img.modifier) rather than a bare single
+  /* Sizing is chained (link > img.modifier) rather than a bare single
      class, same reason as the color fixes elsewhere in this file —
      it needs to out-specificity the `.pm-footer img { height: auto }`
      reset above. */
-  .pm-footer__bottom-supporters-logo-link img {
-    filter: brightness(0) invert(1);
-  }
   .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--knight {
     height: 16px; width: auto; max-width: none;
+    /* The Knight logo's own artwork is black icon + black wordmark —
+       invisible on this dark background. brightness(0) invert(1)
+       flattens it to a solid-white silhouette (alpha/transparency is
+       preserved, only the artwork's own color is discarded). */
+    filter: brightness(0) invert(1);
   }
   .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--upenn {
     height: 24px; width: auto; max-width: none;
+    /* No filter here, unlike Knight above — "center-reverse-logo" is
+       a purpose-built white/light export made for a dark background
+       like this one, not the same navy-on-transparent file used
+       elsewhere on the site, so it should render as exported. If it
+       still doesn't read clearly once this is live, add
+       `filter: brightness(0) invert(1);` here to match the Knight
+       treatment. */
   }
 
 </style>
@@ -432,7 +435,7 @@
 
       <div class="pm-footer__brand">
         <a href="/" class="pm-footer__logo" aria-label="Penn MEDIATED home">
-          <img src="REPLACE_WITH_WP_MEDIA_URL/mediated-white-transparent.svg" alt="Penn MEDIATED — University of Pennsylvania" class="pm-footer__logo-img">
+          <img src="https://infodem.upenn.edu/wp-content/uploads/2026/08/mediated-white-transparent.svg" alt="Penn MEDIATED — University of Pennsylvania" class="pm-footer__logo-img">
         </a>
 
         <p class="pm-footer__tagline">Penn's interdisciplinary hub for media, technology, and democracy</p>
@@ -504,10 +507,10 @@
       <div class="pm-footer__bottom-supporters" aria-label="Supported by">
         <span class="pm-footer__bottom-supporters-label">Supported by</span>
         <a href="https://knightfoundation.org/" target="_blank" rel="noopener" class="pm-footer__bottom-supporters-logo-link">
-          <img src="REPLACE_WITH_WP_MEDIA_URL/knight-foundation-logo.png" alt="John S. and James L. Knight Foundation" class="pm-footer__bottom-supporters-logo--knight">
+          <img src="https://infodem.upenn.edu/wp-content/uploads/2025/10/KF.avif" alt="John S. and James L. Knight Foundation" class="pm-footer__bottom-supporters-logo--knight">
         </a>
         <a href="https://www.upenn.edu/" target="_blank" rel="noopener" class="pm-footer__bottom-supporters-logo-link">
-          <img src="REPLACE_WITH_WP_MEDIA_URL/upenn-logo-full.png" alt="University of Pennsylvania" class="pm-footer__bottom-supporters-logo--upenn">
+          <img src="https://infodem.upenn.edu/wp-content/uploads/2026/01/center-reverse-logo.png" alt="University of Pennsylvania" class="pm-footer__bottom-supporters-logo--upenn">
         </a>
       </div>
     </div>
