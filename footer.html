@@ -390,7 +390,7 @@
      it needs to out-specificity the `.pm-footer img { height: auto }`
      reset above. */
   .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--knight {
-    height: 24px; width: auto; max-width: none;
+    height: 30px; width: auto; max-width: none;
     /* KF.avif's real pixels: a black square icon with the "KF"
        letterforms cut out in white, plus a black "KNIGHT FOUNDATION"
        wordmark — both on a transparent background (confirmed by
@@ -406,16 +406,16 @@
        card to sit on, the standard way to run a black/colored partner
        logo on a dark background when no reversed export exists. This
        preserves the icon's internal contrast instead of destroying
-       it. Padding is sized so the logo itself renders at the same
-       ~16px it was before, inside a 24px-tall chip matching the Penn
-       logo's height. Swap this for a plain height rule (see Penn
+       it. Padding is sized so the logo itself renders proportionally
+       larger inside a chip matching the Penn logo's height. Swap this
+       for a plain height rule (see Penn
        below) if Knight ever provides a proper white/reversed asset. */
     background: var(--pm-c-white);
     padding: 4px 8px;
     border-radius: 3px;
   }
   .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--upenn {
-    height: 24px; width: auto; max-width: none;
+    height: 30px; width: auto; max-width: none;
     /* No filter here either — "center-reverse-logo" is a purpose-built
        white/light export made for a dark background like this one,
        not the same navy-on-transparent file used elsewhere on the
