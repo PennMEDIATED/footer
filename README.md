@@ -53,32 +53,19 @@ are duplicated, not shared, across repos (same discipline `home` and
 
 ## Installing in WordPress
 
-Per the site's migration plan, this repo has **two separate delivery
-destinations that don't sync with each other automatically:**
+No Divi/page builder — confirmed as of now, the site is plain
+WordPress, so this repo has one delivery destination, same mechanism
+as every other PennMEDIATED page repo (`about`, `grants`, `data`,
+`team-leadership`, `home`):
 
-1. **The direct-to-disk static pages** (`about`, `grants`, `data`,
-   `team-leadership`, `home`) — same mechanism as any other page
-   repo: a GitHub webhook triggers `git pull` on eniac, cloned into
-   place at the path those pages are served from, and each static
-   page pulls this footer in via an Apache Server-Side Include
-   (`<!--#include virtual="..." -->`), the same way they already
-   include the shared nav. Automated once wired up — a `git pull`
-   here *is* the deploy for this destination, no manual step after.
-2. **A Divi Theme Builder Code module**, for pages that are
-   genuinely WordPress/Divi-rendered rather than served direct-to-
-   disk (e.g. blog posts) — **`⚠` this is the piece that needs
-   reconciling: the migration plan still documents this as a live
-   destination, but that conflicts with this being a plain-WordPress,
-   no-Divi setup per more recent direction. Confirm which is actually
-   correct before treating either as settled.** If Divi is still in
-   the picture, this destination is a hand-pasted copy living in the
-   WordPress database, not wired to auto-update from this repo —
-   someone re-pastes `index.html` + `styles.css`'s contents into the
-   Theme Builder module by hand after each change that needs to reach
-   it.
+A GitHub webhook triggers `git pull` on eniac, cloned into place at
+the path the static pages are served from. Each static page pulls
+this footer in via an Apache Server-Side Include
+(`<!--#include virtual="..." -->`), the same way they already
+include the shared nav. Automated once wired up — a `git pull` here
+*is* the deploy, no manual copy-paste step after.
 
-Confirm the "Before you ship" items below, then preview a real page,
-however this ends up reaching the live site.
+Confirm the "Before you ship" items below, then preview a real page.
 
 ## Before you ship
 
@@ -121,16 +108,9 @@ This footer is static by design, so most changes are a direct edit to
 
 ```
 edit index.html / styles.css → open index.html in a browser to check
-it → commit → push → git pull on the eniac deploy target → re-apply
-to the Divi copy too, if that destination is still in the picture and
-the change needs to reach it (see note below)
+it → commit → push → git pull on the eniac deploy target
 ```
 
-**Note on deploy:** the two destinations behave differently. For the
-direct-to-disk static pages, `git pull` on eniac *is* the deploy —
-nothing else to do, same as `about`/`grants`/etc. For the Divi Code
-module (if it's still a real destination — see the flagged note under
-"Installing in WordPress"), WordPress stores its own separate copy in
-the database, so `git pull` only updates the *repo*; someone still has
-to hand-copy the updated files into the Theme Builder module for that
-copy to go live.
+**Note on deploy:** `git pull` on eniac *is* the deploy — nothing else
+to do, same as `about`/`grants`/etc. No separate copy living anywhere
+else to keep in sync.
