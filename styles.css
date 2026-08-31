@@ -126,8 +126,8 @@
   justify-content: center;
   height: 39px;
   padding-inline: var(--pm-space-300);
-  background: var(--pm-c-red);
-  color: var(--pm-c-white);
+  background: var(--pm-c-white);
+  color: var(--pm-c-dark);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.24px;
@@ -150,6 +150,11 @@
 .pm-footer__main-inner.pm-footer__inner {
   display: flex;
   flex-wrap: wrap;
+  /* Brand stays put on the left; nav (below) no longer force-grows to
+     fill the row, so space-between pushes it flush against the right
+     edge instead of leaving it stranded in the middle of the leftover
+     width. */
+  justify-content: space-between;
   gap: var(--pm-space-600);
   padding-bottom: var(--pm-space-600);
 }
@@ -252,14 +257,33 @@
 }
 
 /* -- nav columns -- */
+/* Grid, not flex-grow: the old `flex: 2 1 480px` on this + `flex: 1
+   1 160px` on each .pm-footer__nav-col let the row's leftover width
+   (everything past the brand column) get divided three ways, which
+   stretched each column to ~287px on a wide screen — technically
+   even, but far wider than the actual link text needs, reading as
+   "weirdly spread" rather than three tidy columns. A grid with equal
+   1fr tracks, capped at a sensible max width instead of growing to
+   fill the row, keeps the three columns genuinely evenly spaced
+   without ballooning. `width: min(546px, 100%)` caps it at 3×150px
+   + 2 gaps on anything roomy enough, and shrinks to fit on anything
+   narrower rather than overflowing. */
 .pm-footer__nav {
-  flex: 2 1 480px;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--pm-space-600);
+  width: min(546px, 100%);
 }
 
-.pm-footer__nav-col { flex: 1 1 160px; min-width: 160px; }
+/* Below this, three 1fr columns get too cramped to read comfortably
+   (link text starts wrapping hard) — stack to one column instead. */
+@media (max-width: 600px) {
+  .pm-footer__nav {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pm-footer__nav-col { min-width: 0; }
 
 .pm-footer__nav-heading {
   font-family: var(--pm-f-sans);
