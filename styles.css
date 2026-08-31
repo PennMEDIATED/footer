@@ -1,0 +1,402 @@
+/* ===================================================================
+   Design tokens — mirrors PennMEDIATED/home's :root block. Scoped
+   under .pm-footer instead of :root so this can't leak into (or be
+   overridden by) the theme's own global custom-property usage.
+   =================================================================== */
+.pm-footer {
+  --pm-space-050:  4px;
+  --pm-space-100:  8px;
+  --pm-space-150: 12px;
+  --pm-space-200: 16px;
+  --pm-space-250: 20px;
+  --pm-space-300: 24px;
+  --pm-space-400: 32px;
+  --pm-space-500: 40px;
+  --pm-space-600: 48px;
+  --pm-space-800: 64px;
+  --pm-space-1000: 80px;
+
+  --pm-c-dark:      #0d0d0c;
+  --pm-c-accent:    #5533ee;
+  --pm-c-red:       #f03d1f;
+  --pm-c-gray:      #888680;
+  --pm-c-gray-dark: #54534f;
+  --pm-c-white:     #ffffff;
+  --pm-c-gradient:  linear-gradient(150deg, #5533ee 0%, #df3611 81%);
+
+  --pm-f-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --pm-f-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
+
+  --pm-max-w: 1440px;
+  /* 40px side padding — per the Figma spec (every section's content
+     sits at left:40 on the 1440-wide frame), not home/about's 80px
+     page-level padding. The footer is its own component with its
+     own horizontal rhythm. */
+  --pm-pad-x: var(--pm-space-500);
+
+  display: block;
+  font-family: var(--pm-f-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 900px) {
+  .pm-footer { --pm-pad-x: var(--pm-space-300); } /* 24px */
+}
+@media (max-width: 480px) {
+  .pm-footer { --pm-pad-x: var(--pm-space-200); } /* 16px */
+}
+
+/* Fallback font load — the header/nav work (separate repo) should
+   already enqueue DM Sans + EB Garamond sitewide via the child
+   theme; this @import is only a safety net if that hasn't landed
+   yet. Safe to delete once the real enqueue is confirmed live. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=EB+Garamond:ital,wght@0,400;0,600;0,700&display=swap');
+
+/* Reset the handful of elements WP themes tend to re-style
+   with their own global CSS, scoped to this footer only. */
+.pm-footer, .pm-footer *, .pm-footer *::before, .pm-footer *::after {
+  box-sizing: border-box;
+}
+.pm-footer ul { list-style: none; margin: 0; padding: 0; }
+.pm-footer p, .pm-footer h2, .pm-footer h3 { margin: 0; }
+.pm-footer a {
+  text-decoration: none;
+  color: inherit;
+}
+.pm-footer img { display: block; max-width: 100%; height: auto; }
+.pm-footer button { font: inherit; border: none; cursor: pointer; }
+.pm-footer input { font: inherit; }
+
+.pm-footer__inner {
+  width: 100%;
+  max-width: var(--pm-max-w);
+  margin-inline: auto;
+  padding-inline: var(--pm-pad-x);
+}
+
+/* ===================================================================
+   1. Newsletter — gradient band
+   =================================================================== */
+.pm-footer__newsletter {
+  background: var(--pm-c-gradient);
+  min-height: 161px;
+  display: flex;
+  align-items: center;
+}
+
+.pm-footer__newsletter-inner.pm-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  row-gap: var(--pm-space-400);
+  column-gap: var(--pm-space-800);
+}
+
+.pm-footer__newsletter-copy { max-width: 480px; }
+
+.pm-footer__newsletter-title {
+  font-family: var(--pm-f-serif);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 41px;
+  letter-spacing: -0.544px;
+  color: var(--pm-c-white);
+  margin-bottom: 0;
+}
+
+.pm-footer__newsletter-desc {
+  font-family: var(--pm-f-sans);
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 19px;
+  color: var(--pm-c-white);
+}
+
+/* Scoped under .pm-footer__newsletter (not just the one class) for
+   the same reason as .pm-footer__brand .pm-footer__email above —
+   this is now an <a>, so a bare single-class selector would tie
+   with .pm-footer a { color: inherit } and risk picking up the
+   page's ambient text color instead of white. */
+.pm-footer__newsletter .pm-footer__newsletter-submit {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 39px;
+  padding-inline: var(--pm-space-300);
+  background: var(--pm-c-red);
+  color: var(--pm-c-white);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.24px;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.pm-footer__newsletter-submit:hover { opacity: 0.85; }
+
+/* ===================================================================
+   2. Main footer — dark band
+   =================================================================== */
+.pm-footer__main {
+  background: var(--pm-c-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 53px;
+}
+
+.pm-footer__main-inner.pm-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pm-space-600);
+  padding-bottom: var(--pm-space-600);
+}
+
+/* -- brand column -- */
+.pm-footer__brand {
+  flex: 1 1 300px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-space-300);
+}
+
+.pm-footer__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-space-150);
+}
+
+.pm-footer__logo-img {
+  height: 43.59px;
+  width: auto;
+}
+
+.pm-footer__tagline {
+  font-family: var(--pm-f-sans);
+  font-size: 12.8px;
+  font-weight: 300;
+  line-height: 22px;
+  color: var(--pm-c-white);
+  max-width: 268px;
+}
+
+/* Scoped as `.pm-footer__brand .pm-footer__email` (not just the one
+   class) so this beats the `.pm-footer a { color: inherit }` reset
+   above on specificity — a single-class selector ties with that
+   reset and loses on source order in some contexts (this is what
+   was making the email/icons render in whatever the surrounding
+   page's default text color is, instead of red/white). */
+.pm-footer__brand .pm-footer__email {
+  display: inline-block;
+  font-family: var(--pm-f-sans);
+  font-size: 12.8px;
+  line-height: 19px;
+  color: var(--pm-c-white);
+  transition: color 0.15s;
+}
+
+.pm-footer__email:hover { color: var(--pm-c-red); }
+
+.pm-footer__social {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Same specificity fix as .pm-footer__email above — scoped under
+   .pm-footer__social so it beats the `.pm-footer a { color:
+   inherit }` reset instead of tying with it. The icon SVGs use
+   fill="currentColor", so this is what was making them invisible
+   (rendering in the ambient/page text color) against the black
+   background. */
+.pm-footer__social .pm-footer__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pm-c-white);
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.pm-footer__social-link svg { width: 23px; height: 23px; transition: fill 0.15s; }
+/* Bluesky's glyph sits in a tighter bounding box than the other
+   three marks — sized down to match, per the Figma spec, so all
+   four read as the same visual weight in the row. */
+.pm-footer__social-link--bluesky svg { width: 16px; height: 16px; }
+
+/* Hover/focus: flash-cycle through the brand gradient's own two
+   stops (purple → red-orange → purple, looping) instead of just a
+   static color swap. Icons use fill="currentColor", so animating
+   `color` animates the glyph directly — no gradient-fill/mask
+   trickery needed. */
+@keyframes pm-social-flash {
+  0%, 100% { color: var(--pm-c-accent); }
+  50% { color: #df3611; }
+}
+
+.pm-footer__social .pm-footer__social-link:hover,
+.pm-footer__social .pm-footer__social-link:focus-visible {
+  opacity: 1;
+  animation: pm-social-flash 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pm-footer__social .pm-footer__social-link:hover,
+  .pm-footer__social .pm-footer__social-link:focus-visible {
+    animation: none;
+    color: var(--pm-c-accent);
+  }
+}
+
+/* -- nav columns -- */
+.pm-footer__nav {
+  flex: 2 1 480px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pm-space-600);
+}
+
+.pm-footer__nav-col { flex: 1 1 160px; min-width: 160px; }
+
+.pm-footer__nav-heading {
+  font-family: var(--pm-f-sans);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--pm-c-white);
+  margin-bottom: 15px;
+}
+
+.pm-footer__nav-col ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.pm-footer__nav-col a {
+  display: inline-block;
+  font-family: var(--pm-f-sans);
+  font-size: 12.8px;
+  font-weight: 300;
+  line-height: 19px;
+  color: var(--pm-c-white);
+  transition: opacity 0.15s;
+}
+
+.pm-footer__nav-col a:hover { opacity: 0.7; }
+
+/* A nav item with no live page yet (see the HTML comment above the
+   nav) — same type rhythm as a real link so the list doesn't jump,
+   but not a clickable/hoverable <a>, so it doesn't promise a
+   destination that isn't there. Swap the <span> for an <a> once the
+   page exists. */
+.pm-footer__nav-col span.pm-footer__nav-pending {
+  display: inline-block;
+  font-family: var(--pm-f-sans);
+  font-size: 12.8px;
+  font-weight: 300;
+  line-height: 19px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* -- bottom bar --
+   Holds two groups now: the copyright/institution line(s) on the
+   left, and "Supported by" + the Knight/Penn logos on the right
+   (moved out of their own white band and resized/recolored to fit
+   the dark bar — see the two blocks below). */
+.pm-footer__bottom-inner.pm-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* wrap-reverse (not wrap): on a wide screen this still reads
+     copy-left / supported-by-right, unchanged — but on a narrow one,
+     where the two groups no longer fit on one line and stack, it
+     puts "Supported by" on the top line and the copyright line
+     below it, instead of the other way around. */
+  flex-wrap: wrap-reverse;
+  gap: var(--pm-space-300);
+  padding-block: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pm-footer__bottom-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--pm-space-300);
+}
+
+.pm-footer__bottom-copy p {
+  font-family: var(--pm-f-sans);
+  font-size: 11.2px;
+  font-weight: 300;
+  line-height: 17px;
+  color: var(--pm-c-white);
+}
+
+.pm-footer__bottom-supporters {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-space-200);
+}
+
+.pm-footer__bottom-supporters-label {
+  font-family: var(--pm-f-sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.pm-footer__bottom-supporters-logo-link {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.pm-footer__bottom-supporters-logo-link:hover { opacity: 1; }
+
+/* Sizing is chained (link > img.modifier) rather than a bare single
+   class, same reason as the color fixes elsewhere in this file —
+   it needs to out-specificity the `.pm-footer img { height: auto }`
+   reset above. */
+.pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--knight {
+  height: 30px; width: auto; max-width: none;
+  /* KF.avif's real pixels: a black square icon with the "KF"
+     letterforms cut out in white, plus a black "KNIGHT FOUNDATION"
+     wordmark — both on a transparent background (confirmed by
+     sampling the decoded image directly, not just eyeballing a
+     screenshot). Two problems with brightness(0) invert(1) here:
+     it's invisible unfiltered (black art on this near-black
+     background), but inverting flattens the icon's OWN black-vs-
+     white contrast along with the transparency — square and letter
+     both end up the same white, so the "KF" mark disappears into a
+     blank white blob (the wordmark text survives fine since it's
+     single-tone, but the icon doesn't).
+     Fix: keep the artwork's real colors and give it a small white
+     card to sit on, the standard way to run a black/colored partner
+     logo on a dark background when no reversed export exists. This
+     preserves the icon's internal contrast instead of destroying
+     it. Padding is sized so the logo itself renders proportionally
+     larger inside a chip matching the Penn logo's height. Swap this
+     for a plain height rule (see Penn below) if Knight ever provides
+     a proper white/reversed asset. */
+  background: var(--pm-c-white);
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+.pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--upenn {
+  height: 30px; width: auto; max-width: none;
+  /* No filter here either — "center-reverse-logo" is a purpose-built
+     white/light export made for a dark background like this one,
+     not the same navy-on-transparent file used elsewhere on the
+     site, so it renders as exported. Confirmed correct. */
+}

@@ -1,10 +1,11 @@
 # Penn MEDIATED — Global Footer
 
 Hand-coded HTML/CSS for the sitewide footer on the new mediated.upenn.edu
-WordPress site. This is a **basic WordPress install — no Divi or other
-page builder** — so the footer isn't a builder module; it's a static
-snippet that gets installed sitewide by one of a few methods (see
-"Installing in WordPress" below).
+WordPress site — built as a plain `index.html` + `styles.css` pair, the
+same direct-to-disk convention the other PennMEDIATED page repos use
+(`home`, `about`, `grants`, `data`, `team-leadership`), not a Divi/page
+builder module. See "Installing in WordPress" below for how this
+actually reaches the live site.
 
 Footers are mostly static (links, social icons, copyright), so — unlike
 the header/nav, which stays wired to WordPress's native menu system for
@@ -14,11 +15,13 @@ the eniac deploy target.
 
 ## What's in this repo
 
-- **`index.html`** — the deployable snippet. A single `<style>` block
-  (scoped under `.pm-footer`, all custom properties prefixed `--pm-*`)
-  followed by the `<footer>` markup. This is the file's entire
-  contents you install sitewide, however that ends up happening (see
-  "Installing in WordPress" below).
+- **`index.html`** — the `<footer>` markup, linking `styles.css`.
+- **`styles.css`** — all of the footer's CSS (scoped under
+  `.pm-footer`, all custom properties prefixed `--pm-*`). Split out
+  from `index.html` to match the convention the other PennMEDIATED
+  page repos (`home`, `about`, `grants`, `data`, `team-leadership`)
+  already use — an `index.html` + `styles.css` pair, not one file
+  with an inline `<style>` block.
 - **`assets/`** — reference/backup copies of the three logo images
   (`knight-foundation-logo.png`, `upenn-logo-full.png`,
   `mediated-white-transparent.svg`). `index.html` itself doesn't
@@ -50,28 +53,32 @@ are duplicated, not shared, across repos (same discipline `home` and
 
 ## Installing in WordPress
 
-No page builder here, so `index.html` doesn't drop into a module —
-its contents (style block and all) need to render sitewide via
-whichever of these ends up being used. Not settled yet; pick one:
+Per the site's migration plan, this repo has **two separate delivery
+destinations that don't sync with each other automatically:**
 
-- **`wp_footer` hook** — a few lines of PHP that echo this file's
-  contents into the `wp_footer` action, placed in a small mu-plugin
-  (`wp-content/mu-plugins/`) or the active child theme's
-  `functions.php`. Most durable option: works with any theme, no
-  extra plugin, and (if it's an mu-plugin) survives theme switches
-  and updates. Slightly more setup than the alternatives below.
-- **Code-snippets plugin** (e.g. WPCode, Insert Headers and Footers)
-  — paste `index.html`'s contents into a snippet scoped to "footer."
-  No PHP file to touch, but adds a plugin dependency.
-- **Directly in the theme's `footer.php`** — paste the markup into
-  the template. Fastest to wire up, but only safe in a *child*
-  theme — a parent-theme update overwrites it otherwise.
-- **Footer widget area** — only an option if the current theme
-  actually exposes one; many minimal/basic themes don't. If it does,
-  a Custom HTML widget there works too.
+1. **The direct-to-disk static pages** (`about`, `grants`, `data`,
+   `team-leadership`, `home`) — same mechanism as any other page
+   repo: a GitHub webhook triggers `git pull` on eniac, cloned into
+   place at the path those pages are served from, and each static
+   page pulls this footer in via an Apache Server-Side Include
+   (`<!--#include virtual="..." -->`), the same way they already
+   include the shared nav. Automated once wired up — a `git pull`
+   here *is* the deploy for this destination, no manual step after.
+2. **A Divi Theme Builder Code module**, for pages that are
+   genuinely WordPress/Divi-rendered rather than served direct-to-
+   disk (e.g. blog posts) — **`⚠` this is the piece that needs
+   reconciling: the migration plan still documents this as a live
+   destination, but that conflicts with this being a plain-WordPress,
+   no-Divi setup per more recent direction. Confirm which is actually
+   correct before treating either as settled.** If Divi is still in
+   the picture, this destination is a hand-pasted copy living in the
+   WordPress database, not wired to auto-update from this repo —
+   someone re-pastes `index.html` + `styles.css`'s contents into the
+   Theme Builder module by hand after each change that needs to reach
+   it.
 
-Whichever is chosen, confirm the "Before you ship" items below, then
-preview a real page.
+Confirm the "Before you ship" items below, then preview a real page,
+however this ends up reaching the live site.
 
 ## Before you ship
 
@@ -99,33 +106,31 @@ WordPress instance or on decisions outside this repo — search
 ## Previewing locally
 
 `index.html` opens directly in a browser — no build step, no server
-needed. Its three `<img>` tags point at live WordPress media-library
-URLs (`infodem.upenn.edu/wp-content/uploads/...`), so a local preview
-needs network access to load them; if you're offline, or those files
-ever move, the local copies in `assets/` are there as a fallback —
-swap the `src` values back to `assets/...` temporarily to check layout
-without network.
+needed — and picks up `styles.css` automatically as long as the two
+files stay in the same folder. Its three `<img>` tags point at live
+WordPress media-library URLs (`infodem.upenn.edu/wp-content/uploads/...`),
+so a local preview needs network access to load them; if you're
+offline, or those files ever move, the local copies in `assets/` are
+there as a fallback — swap the `src` values back to `assets/...`
+temporarily to check layout without network.
 
 ## Updating
 
 This footer is static by design, so most changes are a direct edit to
-`index.html`:
+`index.html` and/or `styles.css`:
 
 ```
-edit index.html → open it in a browser to check it → commit → push
-→ git pull on the eniac deploy target → re-apply wherever this is
-installed, if the change needs to reach the live site (see note
-below)
+edit index.html / styles.css → open index.html in a browser to check
+it → commit → push → git pull on the eniac deploy target → re-apply
+to the Divi copy too, if that destination is still in the picture and
+the change needs to reach it (see note below)
 ```
 
-**Note on deploy:** whether `git pull` alone is enough to go live
-depends on which install method gets picked (see "Installing in
-WordPress"). If it's the `wp_footer` mu-plugin reading straight from
-this repo's checked-out files, `git pull` on eniac *is* the deploy —
-nothing else to do. If it's a code-snippets plugin or a hand-pasted
-`footer.php`, WordPress is storing its own separate copy (database or
-theme file), so `git pull` only updates the *repo* — someone still
-has to copy the updated `index.html` into that plugin/template for
-the change to actually go live. Worth deciding the install method
-partly on this: the mu-plugin option is the only one of the four
-where a `git pull` is a real deploy on its own.
+**Note on deploy:** the two destinations behave differently. For the
+direct-to-disk static pages, `git pull` on eniac *is* the deploy —
+nothing else to do, same as `about`/`grants`/etc. For the Divi Code
+module (if it's still a real destination — see the flagged note under
+"Installing in WordPress"), WordPress stores its own separate copy in
+the database, so `git pull` only updates the *repo*; someone still has
+to hand-copy the updated files into the Theme Builder module for that
+copy to go live.
