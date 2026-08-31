@@ -78,8 +78,8 @@ WordPress instance or on decisions outside this repo — search
   today's infodem.upenn.edu paths — reconfirm against
   mediated.upenn.edu once that site is live, in case anything gets
   renamed in the move.
-- **Two pending nav items** — "Democracy & the Computational Measure
-  of Narratives" (Research) and "Grants Request for Proposals"
+- **Two pending nav items** — "Democracy & Computational Narratives"
+  (Research) and "Grants Request for Proposals"
   (Resources) don't have pages yet, so they're rendered as plain
   `<span class="pm-footer__nav-pending">` text instead of dead links.
   Once each page exists, swap its `<span>` for an `<a href="...">` in
