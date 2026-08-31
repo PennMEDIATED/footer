@@ -333,7 +333,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
+    /* wrap-reverse (not wrap): on a wide screen this still reads
+       copy-left / supported-by-right, unchanged — but on a narrow one,
+       where the two groups no longer fit on one line and stack, it
+       puts "Supported by" on the top line and the copyright line
+       below it, instead of the other way around. */
+    flex-wrap: wrap-reverse;
     gap: var(--pm-space-300);
     padding-block: 14px;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
