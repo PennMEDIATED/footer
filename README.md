@@ -24,7 +24,10 @@ the eniac deploy target.
   brand lockup used in the footer's own logo
   (`mediated-white-transparent.svg`). Upload all three to the
   WordPress media library as part of installing the footer (see
-  below).
+  below). The Knight/Penn PNGs carry their own baked-in black/navy
+  color — they live in the bottom bar now (bottom-right, next to
+  "Supported by"), rendered white with a `brightness(0) invert(1)`
+  CSS filter rather than needing separate white exports.
 
 ## Design system
 
@@ -41,7 +44,7 @@ site and with whatever the header/nav work lands on. Summary:
 | Accent red | `#f03d1f` |
 | Serif (headlines) | `EB Garamond` |
 | Sans (everything else) | `DM Sans` |
-| Page max-width | `1440px`, 80px side padding (32px < 900px, 20px < 480px) |
+| Page max-width | `1440px`, 40px side padding (24px < 900px, 16px < 480px) |
 
 If a token changes in `home`'s style guide, update it here too — these
 are duplicated, not shared, across repos (same discipline `home` and
@@ -68,13 +71,20 @@ WordPress instance or on decisions outside this repo — search
   Foundation logo, Penn logo, and the MEDIATED brand lockup all
   point at a placeholder path. Upload the three files in `assets/`
   to the WordPress media library and swap in the real URLs.
-- **Nav link slugs** — `LLM Civic Discourse`, `Compendium` (→
-  `/research-compendium/`), `About`, and `Affiliated Faculty` (→
-  `/faculty/`) use paths confirmed live on infodem.upenn.edu today.
-  The rest (`Media Fragmentation`, `Hate Speech & LLMs`, `Our Team`,
-  `Job Openings`, `Data & PennMAP`, `Grants`, `Events`) are best-guess
-  slugs — the migration plan notes the page list is still growing, so
-  confirm final paths on mediated.upenn.edu once that's settled.
+- **Nav link slugs** — every real link in the three nav columns is
+  confirmed live on infodem.upenn.edu today (`/research-compendium/`,
+  `/llm-civic-discourse/`, `/grants/`, `/about/`, `/team/`,
+  `/faculty/`, `/job-openings/`, `/data/`, `/events/`). These are
+  today's infodem.upenn.edu paths — reconfirm against
+  mediated.upenn.edu once that site is live, in case anything gets
+  renamed in the move.
+- **Two pending nav items** — "Democracy & the Computational Measure
+  of Narratives" (Research) and "Grants Request for Proposals"
+  (Resources) don't have pages yet, so they're rendered as plain
+  `<span class="pm-footer__nav-pending">` text instead of dead links.
+  Once each page exists, swap its `<span>` for an `<a href="...">` in
+  `footer.html` (same list markup, just change the tag) — search for
+  `pm-footer__nav-pending` to find both.
 - **Social links** — all four (YouTube, Bluesky, GitHub, LinkedIn) are
   confirmed handles/URLs.
 

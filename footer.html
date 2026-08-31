@@ -160,59 +160,7 @@
   .pm-footer__newsletter-submit:hover { opacity: 0.85; }
 
   /* ===================================================================
-     2. Supported by — white band
-     =================================================================== */
-  .pm-footer__supporters {
-    background: var(--pm-c-white);
-    border-top: 1px solid rgba(13, 13, 12, 0.1);
-    min-height: 97px;
-    display: flex;
-    align-items: center;
-  }
-
-  .pm-footer__supporters-inner.pm-footer__inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    row-gap: var(--pm-space-300);
-  }
-
-  .pm-footer__supporters-label {
-    font-family: var(--pm-f-sans);
-    font-size: 9px;
-    font-weight: 700;
-    line-height: 14px;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-    color: var(--pm-c-dark);
-    white-space: nowrap;
-    /* gap to the Knight logo — matches the Figma spacing, which isn't
-       a uniform gap across all three items (see next comment) */
-    margin-right: 56px;
-  }
-
-  .pm-footer__supporters-logo-link {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    opacity: 1;
-    transition: opacity 0.15s;
-  }
-
-  .pm-footer__supporters-logo-link:hover { opacity: 0.75; }
-
-  /* Knight → Penn gap (74px) is wider than label → Knight (56px) in
-     the Figma file — reproduced with an explicit margin rather than
-     a single flex `gap` so both hold exactly. */
-  .pm-footer__supporters-logo-link + .pm-footer__supporters-logo-link {
-    margin-left: 74px;
-  }
-
-  .pm-footer__supporters-inner img.pm-footer__supporters-logo--knight { height: 33px; width: auto; max-width: none; }
-  .pm-footer__supporters-inner img.pm-footer__supporters-logo--upenn  { height: 55px; width: auto; max-width: none; }
-
-  /* ===================================================================
-     3. Main footer — dark band
+     2. Main footer — dark band
      =================================================================== */
   .pm-footer__main {
     background: var(--pm-c-dark);
@@ -362,23 +310,94 @@
 
   .pm-footer__nav-col a:hover { opacity: 0.7; }
 
-  /* -- bottom bar -- */
+  /* A nav item with no live page yet (see the HTML comment above the
+     nav) — same type rhythm as a real link so the list doesn't jump,
+     but not a clickable/hoverable <a>, so it doesn't promise a
+     destination that isn't there. Swap the <span> for an <a> once the
+     page exists. */
+  .pm-footer__nav-col span.pm-footer__nav-pending {
+    display: inline-block;
+    font-family: var(--pm-f-sans);
+    font-size: 12.8px;
+    font-weight: 300;
+    line-height: 19px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  /* -- bottom bar --
+     Holds two groups now: the copyright/institution line(s) on the
+     left, and "Supported by" + the Knight/Penn logos on the right
+     (moved out of their own white band and resized/recolored to fit
+     the dark bar — see the two blocks below). */
   .pm-footer__bottom-inner.pm-footer__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: var(--pm-space-200);
-    padding-block: 11px;
+    gap: var(--pm-space-300);
+    padding-block: 14px;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .pm-footer__bottom-inner p {
+  .pm-footer__bottom-copy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--pm-space-300);
+  }
+
+  .pm-footer__bottom-copy p {
     font-family: var(--pm-f-sans);
     font-size: 11.2px;
     font-weight: 300;
     line-height: 17px;
     color: var(--pm-c-white);
+  }
+
+  .pm-footer__bottom-supporters {
+    display: flex;
+    align-items: center;
+    gap: var(--pm-space-200);
+  }
+
+  .pm-footer__bottom-supporters-label {
+    font-family: var(--pm-f-sans);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+  }
+
+  .pm-footer__bottom-supporters-logo-link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+  }
+
+  .pm-footer__bottom-supporters-logo-link:hover { opacity: 1; }
+
+  /* The Knight/Penn PNGs carry their own baked-in black/navy color,
+     invisible on this dark background — brightness(0) invert(1)
+     flattens each logo to a solid-white silhouette (alpha/transparency
+     is preserved, only the artwork's own color is discarded), which
+     is the standard trick for dropping an arbitrary brand mark onto a
+     dark strip like this without needing a separate white export.
+     Sizing is chained (link > img.modifier) rather than a bare single
+     class, same reason as the color fixes elsewhere in this file —
+     it needs to out-specificity the `.pm-footer img { height: auto }`
+     reset above. */
+  .pm-footer__bottom-supporters-logo-link img {
+    filter: brightness(0) invert(1);
+  }
+  .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--knight {
+    height: 16px; width: auto; max-width: none;
+  }
+  .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--upenn {
+    height: 24px; width: auto; max-width: none;
   }
 
 </style>
@@ -402,20 +421,7 @@
     </div>
   </section>
 
-  <!-- 2. Supported by -->
-  <section class="pm-footer__supporters" aria-label="Supported by">
-    <div class="pm-footer__supporters-inner pm-footer__inner">
-      <span class="pm-footer__supporters-label">Supported by</span>
-      <a href="https://knightfoundation.org/" target="_blank" rel="noopener" class="pm-footer__supporters-logo-link">
-        <img src="REPLACE_WITH_WP_MEDIA_URL/knight-foundation-logo.png" alt="John S. and James L. Knight Foundation" class="pm-footer__supporters-logo--knight">
-      </a>
-      <a href="https://www.upenn.edu/" target="_blank" rel="noopener" class="pm-footer__supporters-logo-link">
-        <img src="REPLACE_WITH_WP_MEDIA_URL/upenn-logo-full.png" alt="University of Pennsylvania" class="pm-footer__supporters-logo--upenn">
-      </a>
-    </div>
-  </section>
-
-  <!-- 3. Main footer -->
+  <!-- 2. Main footer -->
   <div class="pm-footer__main">
     <div class="pm-footer__main-inner pm-footer__inner">
 
@@ -446,20 +452,19 @@
 
       <nav class="pm-footer__nav" aria-label="Footer">
         <!--
-          Slugs below follow the existing infodem.upenn.edu URL
-          pattern (LLM Civic Discourse, Compendium, About, Affiliated
-          Faculty are confirmed live paths). The rest are best-guess
-          placeholders — confirm final page slugs on mediated.upenn.edu
-          once the WP page structure is set (repo count/list is still
-          growing per the migration plan) and update this nav.
+          Slugs below are confirmed live on infodem.upenn.edu, except
+          two items with no page yet — "Democracy & the Computational
+          Measure of Narratives" and "Grants Request for Proposals" —
+          rendered as plain (non-clickable) <span>s instead of dead
+          links. Swap each to an <a href="..."> once its page exists.
         -->
         <div class="pm-footer__nav-col">
           <h3 class="pm-footer__nav-heading">Research</h3>
           <ul>
-            <li><a href="/llm-civic-discourse/">LLM Civic Discourse</a></li>
-            <li><a href="/media-fragmentation/">Media Fragmentation</a></li>
-            <li><a href="/hate-speech-llms/">Hate Speech &amp; LLMs</a></li>
-            <li><a href="/research-compendium/">Compendium</a></li>
+            <li><a href="/research-compendium/">Research Compendium</a></li>
+            <li><a href="/llm-civic-discourse/">LLMs &amp; Civic Discourse</a></li>
+            <li><span class="pm-footer__nav-pending">Democracy &amp; the Computational Measure of Narratives</span></li>
+            <li><a href="/grants/">Grants Overview</a></li>
           </ul>
         </div>
 
@@ -469,7 +474,7 @@
             <li><a href="/about/">About</a></li>
             <li><a href="/team/">Our Team</a></li>
             <li><a href="/faculty/">Affiliated Faculty</a></li>
-            <li><a href="/careers/">Job Openings</a></li>
+            <li><a href="/job-openings/">Job Openings</a></li>
           </ul>
         </div>
 
@@ -477,9 +482,8 @@
           <h3 class="pm-footer__nav-heading">Resources</h3>
           <ul>
             <li><a href="/data/">Data &amp; PennMAP</a></li>
-            <li><a href="/grants/">Grants</a></li>
+            <li><span class="pm-footer__nav-pending">Grants Request for Proposals</span></li>
             <li><a href="/events/">Events</a></li>
-            <li><a href="#pm-footer-newsletter-heading">Newsletter</a></li>
           </ul>
         </div>
       </nav>
@@ -487,8 +491,20 @@
     </div>
 
     <div class="pm-footer__bottom-inner pm-footer__inner">
-      <p>Penn MEDIATED &middot; Center on Media, Technology and Democracy</p>
-      <p>University of Pennsylvania &middot; Philadelphia, PA</p>
+      <div class="pm-footer__bottom-copy">
+        <p>Penn MEDIATED &middot; Center on Media, Technology and Democracy</p>
+        <p>University of Pennsylvania &middot; Philadelphia, PA</p>
+      </div>
+
+      <div class="pm-footer__bottom-supporters" aria-label="Supported by">
+        <span class="pm-footer__bottom-supporters-label">Supported by</span>
+        <a href="https://knightfoundation.org/" target="_blank" rel="noopener" class="pm-footer__bottom-supporters-logo-link">
+          <img src="REPLACE_WITH_WP_MEDIA_URL/knight-foundation-logo.png" alt="John S. and James L. Knight Foundation" class="pm-footer__bottom-supporters-logo--knight">
+        </a>
+        <a href="https://www.upenn.edu/" target="_blank" rel="noopener" class="pm-footer__bottom-supporters-logo-link">
+          <img src="REPLACE_WITH_WP_MEDIA_URL/upenn-logo-full.png" alt="University of Pennsylvania" class="pm-footer__bottom-supporters-logo--upenn">
+        </a>
+      </div>
     </div>
   </div>
 
