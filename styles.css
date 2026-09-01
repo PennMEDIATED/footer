@@ -28,11 +28,9 @@
   --pm-f-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
 
   --pm-max-w: 1440px;
-  /* 40px side padding — per the Figma spec (every section's content
-     sits at left:40 on the 1440-wide frame), not home/about's 80px
-     page-level padding. The footer is its own component with its
-     own horizontal rhythm. */
-  --pm-pad-x: var(--pm-space-500);
+  /* Side padding — bumped up from the original 40/24/16 Figma-spec
+     values for more breathing room against the edge of the page. */
+  --pm-pad-x: var(--pm-space-800);
 
   display: block;
   font-family: var(--pm-f-sans);
@@ -41,10 +39,10 @@
 }
 
 @media (max-width: 900px) {
-  .pm-footer { --pm-pad-x: var(--pm-space-300); } /* 24px */
+  .pm-footer { --pm-pad-x: var(--pm-space-500); } /* 40px */
 }
 @media (max-width: 480px) {
-  .pm-footer { --pm-pad-x: var(--pm-space-200); } /* 16px */
+  .pm-footer { --pm-pad-x: var(--pm-space-300); } /* 24px */
 }
 
 /* Fallback font load — the header/nav work (separate repo) should
@@ -79,6 +77,16 @@
    1. Newsletter — gradient band
    =================================================================== */
 .pm-footer__newsletter {
+  /* Full-bleed: the real WordPress theme's content wrapper this
+     footer gets included into (however it's nested/padded) can
+     otherwise cut the colored band off at the page's content
+     max-width instead of letting it run edge-to-edge. 100vw + a
+     negative half-viewport margin breaks it out of whatever ancestor
+     container regardless of that nesting; .pm-footer__inner inside
+     still gets the real pm-pad-x margins, so the content itself
+     isn't affected, only the background. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
   background: var(--pm-c-gradient);
   min-height: 161px;
   display: flex;
@@ -94,7 +102,14 @@
   column-gap: var(--pm-space-800);
 }
 
-.pm-footer__newsletter-copy { max-width: 480px; }
+/* No hard max-width — the copy block (title + subtext) grows to fill
+   whatever room the row has left next to the fixed-width Subscribe
+   button, so the subtext runs the full available width on desktop
+   instead of wrapping early inside an artificially narrow column.
+   flex-basis 320px is just a sane minimum before it'd rather wrap;
+   the parent's flex-wrap: wrap (existing) is what makes the button
+   drop below once the window narrows too far for both to fit. */
+.pm-footer__newsletter-copy { flex: 1 1 320px; }
 
 .pm-footer__newsletter-title {
   font-family: var(--pm-f-serif);
@@ -142,6 +157,10 @@
    2. Main footer — dark band
    =================================================================== */
 .pm-footer__main {
+  /* Full-bleed, same reasoning/technique as .pm-footer__newsletter
+     above. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
   background: var(--pm-c-dark);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: 53px;
@@ -179,7 +198,12 @@
   width: auto;
 }
 
-.pm-footer__tagline {
+/* Chained under .pm-footer__brand (not just the one class) — same
+   specificity fix as .pm-footer__email/.pm-footer__social-link below:
+   a bare single-class selector can lose font-family to a real WP
+   theme's own footer/paragraph rules, the same failure mode that hit
+   this footer's colors before it got the same treatment. */
+.pm-footer__brand .pm-footer__tagline {
   font-family: var(--pm-f-sans);
   font-size: 12.8px;
   font-weight: 300;
@@ -285,7 +309,11 @@
 
 .pm-footer__nav-col { min-width: 0; }
 
-.pm-footer__nav-heading {
+/* Chained under .pm-footer__nav-col — same specificity reasoning as
+   the other font-family fixes in this file (a real WP theme's own
+   `footer h3` / heading rules can otherwise outrank a bare
+   single-class selector). */
+.pm-footer__nav-col .pm-footer__nav-heading {
   font-family: var(--pm-f-sans);
   font-size: 9px;
   font-weight: 700;
@@ -368,7 +396,9 @@
   gap: var(--pm-space-200);
 }
 
-.pm-footer__bottom-supporters-label {
+/* Chained under .pm-footer__bottom-supporters — same specificity
+   reasoning as the other font-family fixes in this file. */
+.pm-footer__bottom-supporters .pm-footer__bottom-supporters-label {
   font-family: var(--pm-f-sans);
   font-size: 9px;
   font-weight: 700;
