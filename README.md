@@ -115,6 +115,13 @@ it → commit → push → git pull on the eniac deploy target
 to do, same as `about`/`grants`/etc. No separate copy living anywhere
 else to keep in sync.
 
+## Embedding this footer
+
+Unlike the page repos, **this one is not embedded with an iframe.** It is a body fragment (no `<html>`, `<head>` or `<body>`), designed to be pasted into a Divi Theme Builder Code module so it renders as part of the WordPress page rather than inside a frame of its own. Paste `styles.css` and then `index.html` into that module.
+
+`https://pennmediated.github.io/footer/` exists so you can preview the fragment in a browser; it is not an embed target. For the same reason this repo carries no auto-resize script — there is no parent frame to report a height to.
+
+
 ## Images and video
 
 This applies to every image, GIF and video added to any Penn MEDIATED repo. It is written to be followed directly — by a person or by a Claude session — without further instruction.
