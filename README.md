@@ -53,8 +53,8 @@ are duplicated, not shared, across repos (same discipline `home` and
 
 ## Installing in WordPress
 
-No page builder — the site runs a WordPress block theme (Twenty
-Twenty-Four / Twenty Twenty-Five), so this repo has one delivery
+No page builder — the site runs Twenty Twenty-Five, a
+WordPress block theme, so this repo has one delivery
 destination for the static pages, the same mechanism
 as every other PennMEDIATED page repo (`about`, `grants`, `data`,
 `team-leadership`, `home`):
@@ -120,7 +120,7 @@ else to keep in sync.
 
 Unlike the page repos, **this one is not embedded with an iframe.** It is a body fragment (no `<html>`, `<head>` or `<body>`), designed to render as part of the WordPress page rather than inside a frame of its own.
 
-The site runs a WordPress block theme (Twenty Twenty-Four / Twenty Twenty-Five), so it goes in the **Footer template part**: Appearance → Editor → Patterns → Template Parts → Footer, then a **Custom HTML block** holding `index.html`. Give that block's parent Group **Full width**, or the theme constrains the footer to `theme.json`'s `contentSize`. `styles.css` goes in Appearance → Editor → Styles → Additional CSS, or into a child theme's stylesheet — not inside the Custom HTML block, where a `<style>` tag would be re-inserted on every render.
+The site runs **Twenty Twenty-Five**, a WordPress block theme, so it goes in the **Footer template part**: Appearance → Editor → Patterns → Template Parts → Footer, then a **Custom HTML block** holding `index.html`. Give that block's parent Group **Full width**, or the theme constrains the footer to `theme.json`'s `contentSize` — 645px in Twenty Twenty-Five, which would render this footer as a narrow strip down the middle of the page. `styles.css` goes in Appearance → Editor → Styles → Additional CSS, or into a child theme's stylesheet — not inside the Custom HTML block, where a `<style>` tag would be re-inserted on every render.
 
 `https://pennmediated.github.io/footer/` exists so you can preview the fragment in a browser; it is not an embed target. For the same reason this repo carries no auto-resize script — there is no parent frame to report a height to.
 
