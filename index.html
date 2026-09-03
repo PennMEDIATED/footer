@@ -6,10 +6,12 @@
   (home, about, grants, data, team-leadership) already use — see
   README.md "What's in this repo."
 
-  Plain WordPress, no Divi/page builder: this reaches the live site
-  the same way those other repos do — direct-to-disk via a GitHub
-  webhook + git pull, pulled into each static page via an Apache SSI
-  include. See README.md "Installing in WordPress" for details.
+  No page builder — the site runs a WordPress block theme (Twenty
+  Twenty-Four / Twenty Twenty-Five). This reaches the live site the
+  same way the other repos do: direct-to-disk via a GitHub webhook +
+  git pull, pulled into each static page via an Apache SSI include.
+  For WordPress-rendered pages it goes in the Footer template part as
+  a Custom HTML block. See README.md "Installing in WordPress".
 
   Before going live, confirm every item under README.md "Before you
   ship" (nav links, pending pages, social URLs).

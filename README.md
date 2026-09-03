@@ -3,8 +3,8 @@
 Hand-coded HTML/CSS for the sitewide footer on the new mediated.upenn.edu
 WordPress site — built as a plain `index.html` + `styles.css` pair, the
 same direct-to-disk convention the other PennMEDIATED page repos use
-(`home`, `about`, `grants`, `data`, `team-leadership`), not a Divi/page
-builder module. See "Installing in WordPress" below for how this
+(`home`, `about`, `grants`, `data`, `team-leadership`), not a page-builder
+module. See "Installing in WordPress" below for how this
 actually reaches the live site.
 
 Footers are mostly static (links, social icons, copyright), so — unlike
@@ -53,8 +53,9 @@ are duplicated, not shared, across repos (same discipline `home` and
 
 ## Installing in WordPress
 
-No Divi/page builder — confirmed as of now, the site is plain
-WordPress, so this repo has one delivery destination, same mechanism
+No page builder — the site runs a WordPress block theme (Twenty
+Twenty-Four / Twenty Twenty-Five), so this repo has one delivery
+destination for the static pages, the same mechanism
 as every other PennMEDIATED page repo (`about`, `grants`, `data`,
 `team-leadership`, `home`):
 
@@ -117,7 +118,9 @@ else to keep in sync.
 
 ## Embedding this footer
 
-Unlike the page repos, **this one is not embedded with an iframe.** It is a body fragment (no `<html>`, `<head>` or `<body>`), designed to be pasted into a Divi Theme Builder Code module so it renders as part of the WordPress page rather than inside a frame of its own. Paste `styles.css` and then `index.html` into that module.
+Unlike the page repos, **this one is not embedded with an iframe.** It is a body fragment (no `<html>`, `<head>` or `<body>`), designed to render as part of the WordPress page rather than inside a frame of its own.
+
+The site runs a WordPress block theme (Twenty Twenty-Four / Twenty Twenty-Five), so it goes in the **Footer template part**: Appearance → Editor → Patterns → Template Parts → Footer, then a **Custom HTML block** holding `index.html`. Give that block's parent Group **Full width**, or the theme constrains the footer to `theme.json`'s `contentSize`. `styles.css` goes in Appearance → Editor → Styles → Additional CSS, or into a child theme's stylesheet — not inside the Custom HTML block, where a `<style>` tag would be re-inserted on every render.
 
 `https://pennmediated.github.io/footer/` exists so you can preview the fragment in a browser; it is not an embed target. For the same reason this repo carries no auto-resize script — there is no parent frame to report a height to.
 
@@ -159,7 +162,7 @@ In this repo:
 | Brand lockup (`.pm-footer__logo-img`) | ~340px wide | SVG (currently `mediated-white-transparent.svg`) |
 | Supporter logo (`--knight`, `--upenn`) | 30px tall, width follows the ratio | ~2× the rendered width |
 
-This footer ships into WordPress as a Divi Code module, so its `<img src>` values point at WordPress media-library URLs rather than at `assets/`. `assets/` holds reference copies. If you replace a logo, upload it to WordPress **and** update the copy here, and put the new dimensions on the tag.
+This footer ships into WordPress rather than being served from this repo, so its `<img src>` values point at WordPress media-library URLs rather than at `assets/`. `assets/` holds reference copies. If you replace a logo, upload it to WordPress **and** update the copy here, and put the new dimensions on the tag.
 
 If you are adding an image somewhere not listed, measure the box first (`getBoundingClientRect().width` in the browser, at a 1440px viewport) and double it.
 
@@ -280,4 +283,4 @@ A dropdown, `<details>` block or expand/collapse control uses one affordance sit
 
 Never leave the marker to the browser — style `<select>` with `appearance: none` and supply the chevron, and hide the native `<summary>` marker. The `↗` circle badge is category 4's language and does not belong on a disclosure control.
 
-The footer's tokens are `--pm-*` namespaced because it is injected into Divi, so the colour values above are `--pm-c-red` / `--pm-c-white` / `--pm-c-dark` here. The categories themselves are unchanged.
+The footer's tokens are `--pm-*` namespaced because it is injected into a WordPress theme whose own custom properties share the page, so the colour values above are `--pm-c-red` / `--pm-c-white` / `--pm-c-dark` here. The categories themselves are unchanged.
