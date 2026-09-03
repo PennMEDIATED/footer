@@ -43,7 +43,7 @@ site and with whatever the header/nav work lands on. Summary:
 | Dark / footer bg | `#0d0d0c` |
 | Accent purple | `#5533ee` |
 | Accent red | `#f03d1f` |
-| Serif (headlines) | `EB Garamond` |
+| Serif (works and names) | `EB Garamond` — page titles and the titles of works or names of people. Section headings are sans; see any page repo's README under Typography. |
 | Sans (everything else) | `DM Sans` |
 | Page max-width | `1440px`, 40px side padding (24px < 900px, 16px < 480px) |
 
