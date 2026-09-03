@@ -19,10 +19,15 @@
   --pm-c-dark:      #0d0d0c;
   --pm-c-accent:    #5533ee;
   --pm-c-red:       #f03d1f;
+  /* Deeper red-orange — the gradient's closing stop, promoted to a token
+     of its own. Link text on a white/light ground uses this: --c-red
+     only reaches ~3.9:1 against white, this clears 4.5:1. --c-red stays
+     the brand accent for fills, borders, icons, tags and labels. */
+  --pm-c-red-dark:   #df3611;
   --pm-c-gray:      #888680;
   --pm-c-gray-dark: #54534f;
   --pm-c-white:     #ffffff;
-  --pm-c-gradient:  linear-gradient(150deg, #5533ee 0%, #df3611 81%);
+  --pm-c-gradient:  linear-gradient(150deg, #5533ee 0%, var(--pm-c-red-dark) 81%);
 
   --pm-f-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
   --pm-f-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
@@ -287,7 +292,7 @@
    trickery needed. */
 @keyframes pm-social-flash {
   0%, 100% { color: var(--pm-c-accent); }
-  50% { color: #df3611; }
+  50% { color: var(--pm-c-red-dark); }
 }
 
 .pm-footer__social .pm-footer__social-link:hover,
