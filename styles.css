@@ -218,7 +218,17 @@
   gap: var(--pm-space-150);
 }
 
-.pm-footer__logo-img {
+/* Chained under .pm-footer__logo — a bare single class here (0,1,0)
+   was actually LOSING to the earlier `.pm-footer img { height: auto }`
+   reset (0,1,1 — the type selector "img" still counts a column even
+   at zero weight, so class+type beats class alone). That's what was
+   rendering this logo ~55% oversized on the real page: with no
+   winning height, the browser fell back to the aspect-ratio implied
+   by the <img> width/height attributes against whatever max-width:100%
+   allowed it to grow to. Same specificity fix as everywhere else in
+   this file — chaining under the parent wins on the class column
+   regardless of the type-selector tiebreak. */
+.pm-footer__logo .pm-footer__logo-img {
   height: 43.59px;
   width: auto;
 }
