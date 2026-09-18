@@ -114,6 +114,16 @@
   margin-left: calc(50% - 50vw);
   background: var(--pm-c-gradient);
   min-height: 161px;
+  /* Vertical breathing room used to come entirely from min-height +
+     align-items: center — fine while the title/desc/button fit on one
+     row, but once the row wraps (title+desc stack above the button at
+     narrower widths) the content's own height meets or passes 161px,
+     the centering slack disappears, and the title/button end up flush
+     against the gradient's top/bottom edges with zero gap. Explicit
+     padding-block guarantees this space regardless of how tall the
+     wrapped content gets; min-height still sets a floor for the
+     short-content (single-row, wide-viewport) case. */
+  padding-block: var(--pm-space-500);
   display: flex;
   align-items: center;
 }
