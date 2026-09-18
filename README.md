@@ -109,20 +109,76 @@ This footer is static by design, so most changes are a direct edit to
 
 ```
 edit index.html / styles.css → open index.html in a browser to check
-it → commit → push → git pull on the eniac deploy target
+it → commit → push
 ```
 
-**Note on deploy:** `git pull` on eniac *is* the deploy — nothing else
-to do, same as `about`/`grants`/etc. No separate copy living anywhere
-else to keep in sync.
+**Note on deploy — this repo is the exception, read before assuming
+`about`/`grants`/etc.'s workflow applies:** those other page repos
+deploy automatically (`git pull` on the eniac target *is* the
+deploy). This one currently does not. As embedded on production
+(confirmed 2026-09-18, see "Embedding this footer" below), WordPress
+has no live connection back to this repo — a push to GitHub does
+**not** reach the live site by itself.
+
+Every real change needs **two updates, not one**:
+
+1. Edit `index.html`/`styles.css` here, commit, push (as always — this
+   is what makes the change reviewable and gives it history).
+2. Manually re-paste the updated content into the WordPress side:
+   `index.html`'s `<footer>…</footer>` markup into the Code module,
+   `styles.css`'s contents into the Custom CSS field — see "Embedding
+   this footer" for exactly where. Nothing pulls this automatically;
+   skipping step 2 means the push simply doesn't show up live.
+
+If this footer starts changing often enough that the manual re-paste
+becomes a real burden, it's worth revisiting whether an iframe (with
+a correctly working auto-resize script, unlike the one this replaced)
+is a better trade than the current copy-paste-by-hand setup — flag it
+rather than let step 2 quietly get skipped.
 
 ## Embedding this footer
 
 Unlike the page repos, **this one is not embedded with an iframe.** It is a body fragment (no `<html>`, `<head>` or `<body>`), designed to render as part of the WordPress page rather than inside a frame of its own.
 
-The site runs **Twenty Twenty-Five**, a WordPress block theme, so it goes in the **Footer template part**: Appearance → Editor → Patterns → Template Parts → Footer, then a **Custom HTML block** holding `index.html`. Give that block's parent Group **Full width**, or the theme constrains the footer to `theme.json`'s `contentSize` — 645px in Twenty Twenty-Five, which would render this footer as a narrow strip down the middle of the page. `styles.css` goes in Appearance → Editor → Styles → Additional CSS, or into a child theme's stylesheet — not inside the Custom HTML block, where a `<style>` tag would be re-inserted on every render.
+**As observed on production (mediated.upenn.edu, confirmed 2026-09-18):**
+the live site currently runs **Divi**, not the Twenty Twenty-Five block
+theme earlier drafts of this doc assumed — that assumption was wrong,
+or the site changed theme since it was written; either way, treat "Divi"
+as the confirmed current reality until someone verifies otherwise. The
+footer lives in Divi's **Theme Builder**: the global **Footer template**
+→ a **Code module** in that template's row. Paste `index.html`'s
+`<footer>…</footer>` markup (not the whole file — skip the top comment
+and the `<link rel="stylesheet">` line) directly into that Code module,
+replacing whatever was there before. Give that module's row/section
+**Full Width** (Divi's own row setting) so the footer isn't constrained
+to Divi's content column. `styles.css`'s contents go into Divi's own
+sitewide Custom CSS field (Divi → Theme Options → Custom CSS, or
+Appearance → Customize → Additional CSS) — not inside the Code module,
+where a `<style>` tag risks being stripped or re-inserted oddly on
+rebuild.
 
-`https://pennmediated.github.io/footer/` exists so you can preview the fragment in a browser; it is not an embed target. For the same reason this repo carries no auto-resize script — there is no parent frame to report a height to.
+Divi also caches its compiled CSS into a static file, so a Custom CSS
+edit doesn't always take effect for other visitors the instant it's
+saved — if a change looks right in the builder but not on the live
+page, clear Divi's static CSS cache (Divi → Theme Options → Builder →
+"Clear Divi Static CSS File Cache," or the "Divi Builder" item in the
+admin bar) before assuming the code itself is wrong.
+
+If the site does get migrated to a block theme later, the equivalent
+spot is the **Footer template part** (Appearance → Editor → Patterns →
+Template Parts → Footer) with a **Custom HTML block** holding the same
+markup, its parent Group set to **Full width** (block themes constrain
+content to `theme.json`'s `contentSize` otherwise), and `styles.css` in
+Appearance → Editor → Styles → Additional CSS. Same principle either
+way: paste the real content in, don't point at it.
+
+`https://pennmediated.github.io/footer/` exists so you can preview the
+fragment in a browser; it is not an embed target. For the same reason
+this repo carries no auto-resize script — there is no parent frame to
+report a height to. (An earlier live version of the site did embed this
+via an iframe pointing at that URL, with a broken resize script that
+never sized it correctly — that's why "not an iframe" is a hard rule
+here, not just a preference.)
 
 
 ## Images and video
