@@ -53,8 +53,7 @@ are duplicated, not shared, across repos (same discipline `home` and
 
 ## Installing in WordPress
 
-No page builder — the site runs Twenty Twenty-Five, a
-WordPress block theme, so this repo has one delivery
+The site runs **Divi**. This repo has one delivery
 destination for the static pages, the same mechanism
 as every other PennMEDIATED page repo (`about`, `grants`, `data`,
 `team-leadership`, `home`):
@@ -140,12 +139,9 @@ rather than let step 2 quietly get skipped.
 
 Unlike the page repos, **this one is not embedded with an iframe.** It is a body fragment (no `<html>`, `<head>` or `<body>`), designed to render as part of the WordPress page rather than inside a frame of its own.
 
-**As observed on production (mediated.upenn.edu, confirmed 2026-09-18):**
-the live site currently runs **Divi**, not the Twenty Twenty-Five block
-theme earlier drafts of this doc assumed — that assumption was wrong,
-or the site changed theme since it was written; either way, treat "Divi"
-as the confirmed current reality until someone verifies otherwise. The
-footer lives in Divi's **Theme Builder**: the global **Footer template**
+The site runs **Divi** (confirmed 2026-09-18; earlier drafts of this
+doc assumed the Twenty Twenty-Five block theme, which is no longer the
+case). The footer lives in Divi's **Theme Builder**: the global **Footer template**
 → a **Code module** in that template's row. Paste `index.html`'s
 `<footer>…</footer>` markup (not the whole file — skip the top comment
 and the `<link rel="stylesheet">` line) directly into that Code module,
