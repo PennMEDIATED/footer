@@ -472,7 +472,7 @@
    it needs to out-specificity the `.pm-footer img { height: auto }`
    reset above. */
 .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--knight {
-  height: 30px; width: auto; max-width: none;
+  height: 40px; width: auto; max-width: none;
   /* KF.avif's real pixels: a black square icon with the "KF"
      letterforms cut out in white, plus a black "KNIGHT FOUNDATION"
      wordmark — both on a transparent background (confirmed by
@@ -497,7 +497,7 @@
   border-radius: 3px;
 }
 .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--upenn {
-  height: 30px; width: auto; max-width: none;
+  height: 40px; width: auto; max-width: none;
   /* No filter here either — "center-reverse-logo" is a purpose-built
      white/light export made for a dark background like this one,
      not the same navy-on-transparent file used elsewhere on the
