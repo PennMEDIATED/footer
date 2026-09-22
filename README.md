@@ -74,10 +74,10 @@ WordPress instance or on decisions outside this repo — search
 `index.html` for these markers before installing:
 
 - **Nav link slugs** — every real link in the three nav columns is
-  confirmed live on infodem.upenn.edu today (`/research-compendium/`,
+  confirmed live on mediated.upenn.edu today (`/research-compendium/`,
   `/llm-civic-discourse/`, `/grants/`, `/about/`, `/team/`,
   `/faculty/`, `/job-openings/`, `/data/`, `/events/`). These are
-  today's infodem.upenn.edu paths — reconfirm against
+  today's mediated.upenn.edu paths — reconfirm against
   mediated.upenn.edu once that site is live, in case anything gets
   renamed in the move.
 - **Two pending nav items** — "Democracy & Computational Narratives"
