@@ -95,7 +95,7 @@ WordPress instance or on decisions outside this repo — search
 `index.html` opens directly in a browser — no build step, no server
 needed — and picks up `styles.css` automatically as long as the two
 files stay in the same folder. Its three `<img>` tags point at live
-WordPress media-library URLs (`infodem.upenn.edu/wp-content/uploads/...`),
+WordPress media-library URLs (`mediated.upenn.edu/wp-content/uploads/...`),
 so a local preview needs network access to load them; if you're
 offline, or those files ever move, the local copies in `assets/` are
 there as a fallback — swap the `src` values back to `assets/...`
