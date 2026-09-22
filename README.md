@@ -73,20 +73,22 @@ A few things are placeholders because they depend on the live
 WordPress instance or on decisions outside this repo — search
 `index.html` for these markers before installing:
 
-- **Nav link slugs** — every real link in the three nav columns is
-  confirmed live on mediated.upenn.edu today (`/research-compendium/`,
-  `/llm-civic-discourse/`, `/grants/`, `/about/`, `/team/`,
-  `/faculty/`, `/job-openings/`, `/data/`, `/events/`). These are
-  today's mediated.upenn.edu paths — reconfirm against
-  mediated.upenn.edu once that site is live, in case anything gets
-  renamed in the move.
-- **Two pending nav items** — "Democracy & Computational Narratives"
-  (Research) and "Grants Request for Proposals"
-  (Resources) don't have pages yet, so they're rendered as plain
-  `<span class="pm-footer__nav-pending">` text instead of dead links.
-  Once each page exists, swap its `<span>` for an `<a href="...">` in
+- **Nav link slugs** — root-relative, and checked against the live
+  mediated.upenn.edu nav on 2026-09-22: `/research-compendium/`,
+  `/llm-civic-discourse/`, `/grants-overview/`, `/about/`,
+  `/team-leadership/`, `/team-faculty/`, `/team-job-openings/`,
+  `/events/`, `/data/`, `/grants-rfp/`, `/event-registration/`.
+  The new site's slugs follow the repo names, so `/team/`, `/faculty/`,
+  `/job-openings/` and `/grants/` — which earlier drafts of this footer
+  used — all 404 there. Because these are root-relative rather than
+  absolute URLs, a domain-wide find-and-replace will not catch them;
+  they have to be checked by hand against the live nav.
+- **One pending nav item** — "Democracy & Computational Narratives"
+  (Research) has no page yet, so it is rendered as plain
+  `<span class="pm-footer__nav-pending">` text instead of a dead link.
+  Once the page exists, swap the `<span>` for an `<a href="...">` in
   `index.html` (same list markup, just change the tag) — search for
-  `pm-footer__nav-pending` to find both.
+  `pm-footer__nav-pending` to find it.
 - **Social links** — all four (YouTube, Bluesky, GitHub, LinkedIn) are
   confirmed handles/URLs.
 

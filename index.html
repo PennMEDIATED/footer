@@ -73,11 +73,12 @@
 
       <nav class="pm-footer__nav" aria-label="Footer">
         <!--
-          Slugs below are confirmed live on mediated.upenn.edu, except
-          two items with no page yet — "Democracy & Computational
-          Narratives" and "Grants Request for Proposals" —
-          rendered as plain (non-clickable) <span>s instead of dead
-          links. Swap each to an <a href="..."> once its page exists.
+          Slugs are root-relative and must match the real pages on
+          mediated.upenn.edu, whose slugs follow the repo names. Checked
+          against the live site nav 2026-09-22. "Democracy & Computational
+          Narratives" has no page yet, so it stays a plain (non-clickable)
+          <span> rather than a dead link — swap it to an <a href="..."> once
+          its page exists.
         -->
         <div class="pm-footer__nav-col">
           <h3 class="pm-footer__nav-heading">Research</h3>
@@ -85,7 +86,7 @@
             <li><a href="/research-compendium/">Research Compendium</a></li>
             <li><a href="/llm-civic-discourse/">LLMs &amp; Civic Discourse</a></li>
             <li><span class="pm-footer__nav-pending">Democracy &amp; Computational Narratives</span></li>
-            <li><a href="/grants/">Grants Overview</a></li>
+            <li><a href="/grants-overview/">Grants Overview</a></li>
           </ul>
         </div>
 
@@ -93,9 +94,10 @@
           <h3 class="pm-footer__nav-heading">Center</h3>
           <ul>
             <li><a href="/about/">About</a></li>
-            <li><a href="/team/">Our Team</a></li>
-            <li><a href="/faculty/">Affiliated Faculty</a></li>
-            <li><a href="/job-openings/">Job Openings</a></li>
+            <li><a href="/team-leadership/">Our Team</a></li>
+            <li><a href="/team-faculty/">Affiliated Faculty</a></li>
+            <li><a href="/team-job-openings/">Job Openings</a></li>
+            <li><a href="/events/">Events</a></li>
           </ul>
         </div>
 
@@ -103,8 +105,8 @@
           <h3 class="pm-footer__nav-heading">Resources</h3>
           <ul>
             <li><a href="/data/">Data &amp; PennMAP</a></li>
-            <li><span class="pm-footer__nav-pending">Grants Request for Proposals</span></li>
-            <li><a href="/events/">Events</a></li>
+            <li><a href="/grants-rfp/">Grants Request for Proposals</a></li>
+            <li><a href="/event-registration/">Event Registration</a></li>
           </ul>
         </div>
       </nav>
