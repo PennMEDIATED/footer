@@ -171,16 +171,25 @@
       ];
       var BAND = 34;    /* px between colour bands */
       var FLOW = 0.012; /* palette steps per px of pointer travel */
-      var STEP = 14, RADIUS = 150, PUSH = 9;
+      var STEP = 16, RADIUS = 150, PUSH = 9;
       var w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
       var px = -9999, py = -9999, tx = -9999, ty = -9999, raf = null, idle = 0;
       var travel = 0, lx = null, ly = null;
 
       /* ---- Edge blending -------------------------------------------------
-         The band is a TRANSITION, not a plain strip. Near its top the glyphs
-         densify and take the colour of whatever block sits above; near its
-         bottom they densify again into the footer gradient's own colours. In
-         between they thin out to the faint neutral field.
+         The band is a DISINTEGRATION, not a fade. At its very top it is the
+         solid colour of the block above, which then breaks apart into dense
+         glyphs of that same colour; the fragments thin and pale to a sparse
+         light-grey field through the middle; then the process runs backwards,
+         glyphs of the footer gradient's colours gathering and re-fusing into
+         the solid gradient at the bottom edge.
+
+         Three things carry that: a solid bar at each edge whose alpha ramps
+         out, glyphs whose colour tracks the same ramp, and — the part that
+         actually sells it — genuine SPARSITY. A hash of each cell's position
+         decides whether that glyph is drawn at all, with the probability
+         falling toward the middle. Fading alpha alone reads as a dimmer grid;
+         dropping marks reads as something coming apart.
 
          TOP colour: the page above is a cross-origin iframe, so its colours
          can't be read from here. Each page posts its own closing colour along
@@ -195,11 +204,24 @@
          change GRAD_A/GRAD_B/GRAD_STOP with it. */
       var TOP_RGB = [255, 255, 255];
       var GRAD_A = [85, 51, 238], GRAD_B = [223, 54, 17], GRAD_STOP = 0.81;
-      var NEUTRAL = [13, 13, 12];
-      var FADE = 0.42;  /* fraction of the band's height each edge occupies */
+      /* Light grey, not near-black: the middle is meant to read as the quiet
+         neutral ground both edges dissolve into. */
+      var NEUTRAL = [136, 134, 128];
+      var FADE = 0.46;   /* share of the height each edge's breakdown occupies */
+      var SOLID = 0.20;  /* share at each edge the solid bar reaches into */
+      var KEEP_MIN = 0.32; /* chance a glyph is drawn at the sparsest point */
 
       function mix(a, b, t) {
         return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+      }
+      function rgba(c, a) {
+        return 'rgba(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ',' + a.toFixed(3) + ')';
+      }
+      /* Deterministic per-cell noise. Same cells drop out on every frame, so
+         the field looks like a fixed pattern coming apart rather than static. */
+      function hash(x, y) {
+        var n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+        return n - Math.floor(n);
       }
 
       /* Pages post { frameHeight, edgeColor } — the same message their iframe
@@ -226,15 +248,46 @@
 
       function draw() {
         ctx.clearRect(0, 0, w, h);
+
+        /* 1. The solid edges. These are the colour blocks themselves, reaching
+              into the band and dissolving: the bar is opaque where it meets
+              the block and gone a few rows later, so the glyphs below it read
+              as the pieces it broke into. */
+        var solidPx = Math.max(6, h * SOLID);
+
+        /* Eased, not linear. A straight ramp ends abruptly and leaves a visible
+           line where the bar stops and the glyphs start; a long tail lets the
+           two overlap so the block looks like it is coming apart. */
+        var gTop = ctx.createLinearGradient(0, 0, 0, solidPx);
+        gTop.addColorStop(0.00, rgba(TOP_RGB, 1));
+        gTop.addColorStop(0.35, rgba(TOP_RGB, 0.70));
+        gTop.addColorStop(0.65, rgba(TOP_RGB, 0.28));
+        gTop.addColorStop(1.00, rgba(TOP_RGB, 0));
+        ctx.fillStyle = gTop;
+        ctx.fillRect(0, 0, w, solidPx);
+
+        /* The bottom bar has to be a HORIZONTAL gradient (it meets a gradient,
+           not a flat colour) while its alpha ramps VERTICALLY. One canvas
+           gradient can't do both, so it goes down as thin strips. */
+        var strips = 34, sh = solidPx / strips;
+        for (var k = 0; k < strips; k++) {
+          /* Same easing as the top bar, cubed toward the edge. */
+          var u = (k + 1) / strips;
+          var a = u * u * u;
+          var gBot = ctx.createLinearGradient(0, 0, w, 0);
+          gBot.addColorStop(0, rgba(GRAD_A, a));
+          gBot.addColorStop(Math.min(1, GRAD_STOP), rgba(GRAD_B, a));
+          gBot.addColorStop(1, rgba(GRAD_B, a));
+          ctx.fillStyle = gBot;
+          ctx.fillRect(0, h - solidPx + k * sh, w, sh + 1);
+        }
+
+        /* 2. The fragments. */
         for (var x = STEP / 2; x < w; x += STEP) {
-          /* Bottom-edge colour varies across the width to track the gradient. */
           var gu = Math.min(1, (x / w) / GRAD_STOP);
           var botRGB = mix(GRAD_A, GRAD_B, gu);
 
           for (var y = STEP / 2; y < h; y += STEP) {
-            /* How strongly this row belongs to the top edge, the bottom edge,
-               or the thin neutral middle. Squared so the fade is gentle in the
-               middle and piles up against the two boundaries. */
             var t = y / h;
             var topE = t < FADE ? 1 - t / FADE : 0;
             var botE = t > 1 - FADE ? (t - (1 - FADE)) / FADE : 0;
@@ -243,23 +296,30 @@
             if (topE >= botE) { edge = topE; edgeRGB = TOP_RGB; }
             else              { edge = botE; edgeRGB = botRGB; }
 
-            /* Linear, not squared. Squaring collapsed the ramp into the single
-               outermost row and left everything else neutral, so the band read
-               as a flat strip with a stray coloured line at each end rather
-               than as a gradient of density. */
-            var base = mix(NEUTRAL, edgeRGB, edge);
-            var alpha = 0.10 + edge * 0.85;
-
             var dx = x - px, dy = y - py;
             var d = Math.sqrt(dx * dx + dy * dy);
             var near = d < RADIUS ? 1 - d / RADIUS : 0;
             near = near * near;
-            var ox = d > 0.01 ? (dx / d) * near * PUSH : 0;
-            var oy = d > 0.01 ? (dy / d) * near * PUSH : 0;
+
+            /* Sparsity. Dense against either edge, thinning to KEEP_MIN in the
+               middle. The cursor pulls dropped glyphs back in, so the field
+               gathers around the pointer as well as scattering. */
+            var keep = KEEP_MIN + edge * (1 - KEEP_MIN) + near * 0.5;
+            if (hash(x, y) > keep) continue;
+
+            var base = mix(NEUTRAL, edgeRGB, edge);
+            var alpha = 0.29 + edge * 0.71;
+
+            /* Jitter every mark off the lattice. On a strict grid the rows read
+               as horizontal stripes of varying darkness — a fading table, not a
+               disintegrating surface. Deterministic, so it never shimmers. */
+            var jx = (hash(x, y) - 0.5) * STEP * 0.75;
+            var jy = (hash(y * 3, x * 7) - 0.5) * STEP * 0.75;
+
+            var ox = jx + (d > 0.01 ? (dx / d) * near * PUSH : 0);
+            var oy = jy + (d > 0.01 ? (dy / d) * near * PUSH : 0);
 
             if (near > 0.30) {
-              /* Cursor wash wins, but blends into the edge colour rather than
-                 replacing it outright, so the transition still reads under it. */
               var band = d / BAND - travel * FLOW;
               var lo = Math.floor(band), f = band - lo;
               var pa = PALETTE[((lo % PALETTE.length) + PALETTE.length) % PALETTE.length];
@@ -268,17 +328,14 @@
               alpha = Math.max(alpha, 0.35 + near * 0.6);
             }
 
-            ctx.fillStyle = 'rgba(' + Math.round(base[0]) + ',' + Math.round(base[1]) + ',' +
-                            Math.round(base[2]) + ',' + alpha.toFixed(3) + ')';
+            ctx.fillStyle = rgba(base, alpha);
             var i = (Math.round(x / STEP) * 3 + Math.round(y / STEP)) % GLYPHS.length;
             ctx.fillText(GLYPHS[i], x + ox, y + oy);
 
-            /* Density, not just opacity: close to either edge a second glyph is
-               dropped on the half-step so the field visibly thickens into the
-               block above and the gradient below instead of merely darkening. */
-            if (edge > 0.10) {
-              ctx.fillStyle = 'rgba(' + Math.round(base[0]) + ',' + Math.round(base[1]) + ',' +
-                              Math.round(base[2]) + ',' + (alpha * (0.20 + edge * 0.62)).toFixed(3) + ')';
+            /* A second mark on the half-step near the edges, so the breakdown
+               thickens with real marks rather than only getting darker. */
+            if (edge > 0.15 && hash(y, x) < 0.35 + edge * 0.65) {
+              ctx.fillStyle = rgba(base, alpha * (0.22 + edge * 0.6));
               ctx.fillText(GLYPHS[(i + 3) % GLYPHS.length], x + STEP / 2 + ox, y + STEP / 2 + oy);
             }
           }

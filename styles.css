@@ -529,11 +529,11 @@
      through the middle, and densifies into the newsletter gradient at the
      bottom. At 16px steps that is ~11 rows, enough for the fade to read;
      much shorter and the two edges collide with no neutral middle. */
-  height: 176px;
+  height: 224px;
   overflow: hidden;
 }
 .pm-footer .pm-signal-band__canvas { display: block; width: 100%; height: 100%; }
 
 @media (max-width: 480px) {
-  .pm-footer .pm-signal-band { height: 112px; }
+  .pm-footer .pm-signal-band { height: 150px; }
 }
