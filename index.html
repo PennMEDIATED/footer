@@ -171,10 +171,50 @@
       ];
       var BAND = 34;    /* px between colour bands */
       var FLOW = 0.012; /* palette steps per px of pointer travel */
-      var STEP = 20, RADIUS = 150, PUSH = 9;
+      var STEP = 14, RADIUS = 150, PUSH = 9;
       var w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
       var px = -9999, py = -9999, tx = -9999, ty = -9999, raf = null, idle = 0;
       var travel = 0, lx = null, ly = null;
+
+      /* ---- Edge blending -------------------------------------------------
+         The band is a TRANSITION, not a plain strip. Near its top the glyphs
+         densify and take the colour of whatever block sits above; near its
+         bottom they densify again into the footer gradient's own colours. In
+         between they thin out to the faint neutral field.
+
+         TOP colour: the page above is a cross-origin iframe, so its colours
+         can't be read from here. Each page posts its own closing colour along
+         with its height (see any page repo's sendHeight); we listen for it.
+         Until one arrives this stays white, which blends invisibly into a
+         white-ended page — the safe default.
+
+         BOTTOM colour: sampled from the newsletter gradient directly beneath,
+         linear-gradient(150deg, #5533ee 0%, #df3611 81%). At 150deg the axis
+         runs mostly left-to-right, so a horizontal lerp to the 81% stop is a
+         close enough match for glyph-sized marks. Change the gradient and
+         change GRAD_A/GRAD_B/GRAD_STOP with it. */
+      var TOP_RGB = [255, 255, 255];
+      var GRAD_A = [85, 51, 238], GRAD_B = [223, 54, 17], GRAD_STOP = 0.81;
+      var NEUTRAL = [13, 13, 12];
+      var FADE = 0.42;  /* fraction of the band's height each edge occupies */
+
+      function mix(a, b, t) {
+        return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+      }
+
+      /* Pages post { frameHeight, edgeColor } — the same message their iframe
+         resize listener already reads, so this needs no change to the embed
+         snippet. Anything else on the page posting messages is ignored. */
+      window.addEventListener('message', function (e) {
+        var c = e.data && e.data.edgeColor;
+        if (typeof c !== 'string') return;
+        var m = c.match(/(\d+)\D+(\d+)\D+(\d+)/);
+        if (!m) return;
+        var next = [+m[1], +m[2], +m[3]];
+        if (next[0] === TOP_RGB[0] && next[1] === TOP_RGB[1] && next[2] === TOP_RGB[2]) return;
+        TOP_RGB = next;
+        draw();
+      });
 
       function size() {
         w = canvas.clientWidth; h = canvas.clientHeight;
@@ -187,28 +227,60 @@
       function draw() {
         ctx.clearRect(0, 0, w, h);
         for (var x = STEP / 2; x < w; x += STEP) {
+          /* Bottom-edge colour varies across the width to track the gradient. */
+          var gu = Math.min(1, (x / w) / GRAD_STOP);
+          var botRGB = mix(GRAD_A, GRAD_B, gu);
+
           for (var y = STEP / 2; y < h; y += STEP) {
+            /* How strongly this row belongs to the top edge, the bottom edge,
+               or the thin neutral middle. Squared so the fade is gentle in the
+               middle and piles up against the two boundaries. */
+            var t = y / h;
+            var topE = t < FADE ? 1 - t / FADE : 0;
+            var botE = t > 1 - FADE ? (t - (1 - FADE)) / FADE : 0;
+
+            var edge, edgeRGB;
+            if (topE >= botE) { edge = topE; edgeRGB = TOP_RGB; }
+            else              { edge = botE; edgeRGB = botRGB; }
+
+            /* Linear, not squared. Squaring collapsed the ramp into the single
+               outermost row and left everything else neutral, so the band read
+               as a flat strip with a stray coloured line at each end rather
+               than as a gradient of density. */
+            var base = mix(NEUTRAL, edgeRGB, edge);
+            var alpha = 0.10 + edge * 0.85;
+
             var dx = x - px, dy = y - py;
             var d = Math.sqrt(dx * dx + dy * dy);
             var near = d < RADIUS ? 1 - d / RADIUS : 0;
             near = near * near;
             var ox = d > 0.01 ? (dx / d) * near * PUSH : 0;
             var oy = d > 0.01 ? (dy / d) * near * PUSH : 0;
+
             if (near > 0.30) {
+              /* Cursor wash wins, but blends into the edge colour rather than
+                 replacing it outright, so the transition still reads under it. */
               var band = d / BAND - travel * FLOW;
               var lo = Math.floor(band), f = band - lo;
-              var a = PALETTE[((lo % PALETTE.length) + PALETTE.length) % PALETTE.length];
-              var b = PALETTE[(((lo + 1) % PALETTE.length) + PALETTE.length) % PALETTE.length];
-              ctx.fillStyle = 'rgba(' +
-                Math.round(a[0] + (b[0] - a[0]) * f) + ',' +
-                Math.round(a[1] + (b[1] - a[1]) * f) + ',' +
-                Math.round(a[2] + (b[2] - a[2]) * f) + ',' +
-                (0.35 + near * 0.6).toFixed(3) + ')';
-            } else {
-              ctx.fillStyle = 'rgba(13,13,12,' + (0.13 + near * 0.35).toFixed(3) + ')';
+              var pa = PALETTE[((lo % PALETTE.length) + PALETTE.length) % PALETTE.length];
+              var pb = PALETTE[(((lo + 1) % PALETTE.length) + PALETTE.length) % PALETTE.length];
+              base = mix(base, mix(pa, pb, f), 1 - edge * 0.55);
+              alpha = Math.max(alpha, 0.35 + near * 0.6);
             }
+
+            ctx.fillStyle = 'rgba(' + Math.round(base[0]) + ',' + Math.round(base[1]) + ',' +
+                            Math.round(base[2]) + ',' + alpha.toFixed(3) + ')';
             var i = (Math.round(x / STEP) * 3 + Math.round(y / STEP)) % GLYPHS.length;
             ctx.fillText(GLYPHS[i], x + ox, y + oy);
+
+            /* Density, not just opacity: close to either edge a second glyph is
+               dropped on the half-step so the field visibly thickens into the
+               block above and the gradient below instead of merely darkening. */
+            if (edge > 0.10) {
+              ctx.fillStyle = 'rgba(' + Math.round(base[0]) + ',' + Math.round(base[1]) + ',' +
+                              Math.round(base[2]) + ',' + (alpha * (0.20 + edge * 0.62)).toFixed(3) + ')';
+              ctx.fillText(GLYPHS[(i + 3) % GLYPHS.length], x + STEP / 2 + ox, y + STEP / 2 + oy);
+            }
           }
         }
       }
