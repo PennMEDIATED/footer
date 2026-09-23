@@ -524,16 +524,11 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
   background: var(--pm-c-white);
-  /* Taller than a plain strip needs to be, because it is a transition: the
-     glyph field densifies into the block above at the top, thins to nothing
-     through the middle, and densifies into the newsletter gradient at the
-     bottom. At 16px steps that is ~11 rows, enough for the fade to read;
-     much shorter and the two edges collide with no neutral middle. */
-  height: 224px;
+  height: 132px;
   overflow: hidden;
 }
 .pm-footer .pm-signal-band__canvas { display: block; width: 100%; height: 100%; }
 
 @media (max-width: 480px) {
-  .pm-footer .pm-signal-band { height: 150px; }
+  .pm-footer .pm-signal-band { height: 96px; }
 }
