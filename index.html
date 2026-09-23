@@ -155,7 +155,17 @@
       var ctx = canvas.getContext('2d');
       var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      var GLYPHS = ['\u00b7', '\u2219', '\u2022', '\u25e6', '+', '\u00d7'];
+      /* ONE mark, a filled dot, varying only in size and opacity.
+
+         This was a mixed set of glyphs — · ∙ • ◦ + × — scattered off the
+         lattice by random jitter, with random dropout. Three separate sources
+         of noise, and the result read as confetti: the + and × in particular
+         look like clip art at this size. Refinement here comes from order, not
+         from more variety. A single mark on a strict grid, shrinking and
+         thinning in a fixed pattern, is a halftone — the way print has stepped
+         an image down to nothing for a century. */
+      var R_MAX = 2.5;  /* dot radius where the block is still whole */
+      var R_MIN = 0.75; /* dot radius in the sparse middle */
       /* Accent-palette solids. Colour is chosen by distance from the pointer and
          advanced by how far the pointer has travelled, so the field washes through
          the palette as the cursor moves and holds still when it stops. */
@@ -171,7 +181,7 @@
       ];
       var BAND = 34;    /* px between colour bands */
       var FLOW = 0.012; /* palette steps per px of pointer travel */
-      var STEP = 16, RADIUS = 150, PUSH = 9;
+      var STEP = 11, RADIUS = 150, PUSH = 6;
       var w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
       var px = -9999, py = -9999, tx = -9999, ty = -9999, raf = null, idle = 0;
       var travel = 0, lx = null, ly = null;
@@ -209,7 +219,7 @@
       var NEUTRAL = [136, 134, 128];
       var FADE = 0.46;   /* share of the height each edge's breakdown occupies */
       var SOLID = 0.20;  /* share at each edge the solid bar reaches into */
-      var KEEP_MIN = 0.32; /* chance a glyph is drawn at the sparsest point */
+      var KEEP_MIN = 0.30; /* share of dots surviving at the sparsest point */
 
       function mix(a, b, t) {
         return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
@@ -217,8 +227,29 @@
       function rgba(c, a) {
         return 'rgba(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ',' + a.toFixed(3) + ')';
       }
-      /* Deterministic per-cell noise. Same cells drop out on every frame, so
-         the field looks like a fixed pattern coming apart rather than static. */
+      /* An 8x8 Bayer matrix: the standard ordered-dither threshold map.
+
+         Random dropout clumps — some patches go bare while others stay thick,
+         which is what made the thinning look haphazard. An ordered dither
+         removes dots in a fixed, evenly distributed sequence, so every stage of
+         the fade is uniform across the width and the field thins smoothly
+         instead of breaking into blotches. */
+      var BAYER = [
+         0, 32,  8, 40,  2, 34, 10, 42,
+        48, 16, 56, 24, 50, 18, 58, 26,
+        12, 44,  4, 36, 14, 46,  6, 38,
+        60, 28, 52, 20, 62, 30, 54, 22,
+         3, 35, 11, 43,  1, 33,  9, 41,
+        51, 19, 59, 27, 49, 17, 57, 25,
+        15, 47,  7, 39, 13, 45,  5, 37,
+        63, 31, 55, 23, 61, 29, 53, 21
+      ];
+      function dither(cx, cy) {
+        return BAYER[(((cy % 8) + 8) % 8) * 8 + (((cx % 8) + 8) % 8)] / 64;
+      }
+      /* Kept only to vary dot size by a few percent. A perfectly uniform
+         halftone reads as mechanical; this is below the threshold of looking
+         random but stops the field feeling machine-printed. */
       function hash(x, y) {
         var n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
         return n - Math.floor(n);
@@ -242,8 +273,6 @@
         w = canvas.clientWidth; h = canvas.clientHeight;
         canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.font = '12px ' + (getComputedStyle(canvas.closest('.pm-footer') || document.body).fontFamily || 'sans-serif');
       }
 
       function draw() {
@@ -269,7 +298,7 @@
         /* The bottom bar has to be a HORIZONTAL gradient (it meets a gradient,
            not a flat colour) while its alpha ramps VERTICALLY. One canvas
            gradient can't do both, so it goes down as thin strips. */
-        var strips = 34, sh = solidPx / strips;
+        var strips = 64, sh = solidPx / strips;
         for (var k = 0; k < strips; k++) {
           /* Same easing as the top bar, cubed toward the edge. */
           var u = (k + 1) / strips;
@@ -282,42 +311,50 @@
           ctx.fillRect(0, h - solidPx + k * sh, w, sh + 1);
         }
 
-        /* 2. The fragments. */
-        for (var x = STEP / 2; x < w; x += STEP) {
-          var gu = Math.min(1, (x / w) / GRAD_STOP);
-          var botRGB = mix(GRAD_A, GRAD_B, gu);
+        /* 2. The halftone, on a HEXAGONAL lattice.
 
-          for (var y = STEP / 2; y < h; y += STEP) {
-            var t = y / h;
-            var topE = t < FADE ? 1 - t / FADE : 0;
-            var botE = t > 1 - FADE ? (t - (1 - FADE)) / FADE : 0;
+              Every other row is offset by half a step and the rows sit
+              STEP * sin(60°) apart, which puts each dot equidistant from its
+              six neighbours. A square grid spaces a dot 41% further from its
+              diagonal neighbours than its orthogonal ones, and the eye reads
+              that difference as ranks and files — you see rows and columns
+              before you see a field. Hexagonal packing has no preferred axis,
+              so the same dots read as an even texture. It is also what an
+              actual print halftone uses, for the same reason.
 
-            var edge, edgeRGB;
-            if (topE >= botE) { edge = topE; edgeRGB = TOP_RGB; }
-            else              { edge = botE; edgeRGB = botRGB; }
+              Still a strict lattice — no jitter. What changes down the band is
+              dot size, opacity, and how many survive the dither. */
+        var ROW = STEP * 0.8660254;
+
+        for (var y = ROW / 2, cy = 0; y < h; y += ROW, cy++) {
+          var xOff = (cy & 1) ? STEP / 2 : 0;
+
+          var t = y / h;
+          var topE = t < FADE ? 1 - t / FADE : 0;
+          var botE = t > 1 - FADE ? (t - (1 - FADE)) / FADE : 0;
+          var fromTop = topE >= botE;
+          var edge = fromTop ? topE : botE;
+
+          for (var x = STEP / 2 + xOff, cx = 0; x < w + STEP; x += STEP, cx++) {
+            var edgeRGB = fromTop ? TOP_RGB
+                                  : mix(GRAD_A, GRAD_B, Math.min(1, (x / w) / GRAD_STOP));
 
             var dx = x - px, dy = y - py;
             var d = Math.sqrt(dx * dx + dy * dy);
             var near = d < RADIUS ? 1 - d / RADIUS : 0;
             near = near * near;
 
-            /* Sparsity. Dense against either edge, thinning to KEEP_MIN in the
-               middle. The cursor pulls dropped glyphs back in, so the field
-               gathers around the pointer as well as scattering. */
-            var keep = KEEP_MIN + edge * (1 - KEEP_MIN) + near * 0.5;
-            if (hash(x, y) > keep) continue;
+            /* Ordered dropout. The cursor raises the survival threshold, so
+               the field gathers itself back together around the pointer. */
+            var keep = KEEP_MIN + edge * (1 - KEEP_MIN) + near * 0.45;
+            if (dither(cx, cy) >= keep) continue;
 
             var base = mix(NEUTRAL, edgeRGB, edge);
-            var alpha = 0.29 + edge * 0.71;
+            var alpha = 0.34 + edge * 0.66;
+            var r = (R_MIN + (R_MAX - R_MIN) * edge) * (0.90 + hash(x, y) * 0.20);
 
-            /* Jitter every mark off the lattice. On a strict grid the rows read
-               as horizontal stripes of varying darkness — a fading table, not a
-               disintegrating surface. Deterministic, so it never shimmers. */
-            var jx = (hash(x, y) - 0.5) * STEP * 0.75;
-            var jy = (hash(y * 3, x * 7) - 0.5) * STEP * 0.75;
-
-            var ox = jx + (d > 0.01 ? (dx / d) * near * PUSH : 0);
-            var oy = jy + (d > 0.01 ? (dy / d) * near * PUSH : 0);
+            var ox = d > 0.01 ? (dx / d) * near * PUSH : 0;
+            var oy = d > 0.01 ? (dy / d) * near * PUSH : 0;
 
             if (near > 0.30) {
               var band = d / BAND - travel * FLOW;
@@ -325,19 +362,14 @@
               var pa = PALETTE[((lo % PALETTE.length) + PALETTE.length) % PALETTE.length];
               var pb = PALETTE[(((lo + 1) % PALETTE.length) + PALETTE.length) % PALETTE.length];
               base = mix(base, mix(pa, pb, f), 1 - edge * 0.55);
-              alpha = Math.max(alpha, 0.35 + near * 0.6);
+              alpha = Math.max(alpha, 0.45 + near * 0.5);
+              r *= 1 + near * 0.55;
             }
 
             ctx.fillStyle = rgba(base, alpha);
-            var i = (Math.round(x / STEP) * 3 + Math.round(y / STEP)) % GLYPHS.length;
-            ctx.fillText(GLYPHS[i], x + ox, y + oy);
-
-            /* A second mark on the half-step near the edges, so the breakdown
-               thickens with real marks rather than only getting darker. */
-            if (edge > 0.15 && hash(y, x) < 0.35 + edge * 0.65) {
-              ctx.fillStyle = rgba(base, alpha * (0.22 + edge * 0.6));
-              ctx.fillText(GLYPHS[(i + 3) % GLYPHS.length], x + STEP / 2 + ox, y + STEP / 2 + oy);
-            }
+            ctx.beginPath();
+            ctx.arc(x + ox, y + oy, r, 0, 6.2832);
+            ctx.fill();
           }
         }
       }
@@ -357,6 +389,23 @@
       if (reduce) return;
 
       window.addEventListener('resize', function () { size(); draw(); wake(); });
+
+      /* Re-measure whenever the canvas itself changes size, not only when the
+         window does. This band is full-bleed (width: 100vw with a negative
+         margin) and lives inside a page builder, so its box can settle after
+         first paint — fonts landing, a row's width resolving, the footer being
+         injected. If the backing store keeps the first measurement while CSS
+         stretches the element, the scale goes non-uniform and every dot draws
+         as an ellipse. */
+      if (window.ResizeObserver) {
+        var seenW = 0, seenH = 0;
+        new ResizeObserver(function () {
+          var cw = canvas.clientWidth, ch = canvas.clientHeight;
+          if (cw === seenW && ch === seenH) return;
+          seenW = cw; seenH = ch;
+          size(); draw();
+        }).observe(canvas);
+      }
       document.addEventListener('pointermove', function (e) {
         var r = canvas.getBoundingClientRect();
         if (e.clientY < r.top - RADIUS || e.clientY > r.bottom + RADIUS) { tx = -9999; ty = -9999; lx = null; ly = null; }
