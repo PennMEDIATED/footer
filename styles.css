@@ -442,6 +442,10 @@
 .pm-footer__bottom-supporters {
   display: flex;
   align-items: center;
+  /* Wraps so the two 52px-tall logos drop to a second line on phones. Unwrapped,
+     the row was ~450px wide and pushed every page ~85px past a 390px screen
+     (sideways scroll), in all browsers. */
+  flex-wrap: wrap;
   gap: var(--pm-space-200);
 }
 
