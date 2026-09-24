@@ -33,7 +33,7 @@
   --pm-f-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
 
   /* -- Type scale --
-     Mirrors the sitewide --fs-*/--lh-* scale (see any page repo's
+     Mirrors the sitewide --fs-* and --lh-* scales (see any page repo's
      README), re-namespaced to --pm-* for the same reason as the space
      and colour tokens above: this block ships into WordPress and must
      not collide with the theme's own custom properties. Fluid clamps
