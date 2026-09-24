@@ -102,16 +102,15 @@
    1. Newsletter — gradient band
    =================================================================== */
 .pm-footer__newsletter {
-  /* Full-bleed: the real WordPress theme's content wrapper this
-     footer gets included into (however it's nested/padded) can
-     otherwise cut the colored band off at the page's content
-     max-width instead of letting it run edge-to-edge. 100vw + a
-     negative half-viewport margin breaks it out of whatever ancestor
-     container regardless of that nesting; .pm-footer__inner inside
-     still gets the real pm-pad-x margins, so the content itself
-     isn't affected, only the background. */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  /* Edge-to-edge comes from the Divi footer row being set to Full Width
+     (see README "Embedding this footer"), not from CSS. This used to be
+     width: 100vw + margin-left: calc(50% - 50vw), but 100vw includes the
+     vertical scrollbar wherever scrollbars are always shown (Firefox or
+     Chrome on a Mac with a mouse, Windows), so the band ran ~15px past the
+     page and every page scrolled sideways onto a white strip. If the row
+     ever loses Full Width, the bands will stop at the content column: fix
+     the row setting rather than bringing 100vw back. .pm-footer__inner
+     still carries the pm-pad-x margins for the content itself. */
   background: var(--pm-c-gradient);
   min-height: 161px;
   /* Vertical breathing room used to come entirely from min-height +
@@ -192,10 +191,8 @@
    2. Main footer — dark band
    =================================================================== */
 .pm-footer__main {
-  /* Full-bleed, same reasoning/technique as .pm-footer__newsletter
-     above. */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  /* Edge-to-edge via the Full Width row, as .pm-footer__newsletter
+     above (no 100vw; see why there). */
   background: var(--pm-c-dark);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: var(--pm-space-600);
@@ -516,8 +513,8 @@
    pointer events work fine.
 
    Lives here rather than in each page repo so every page gets it from one
-   implementation. Full-bleed by the same 100vw trick the newsletter band
-   uses, so Divi's content column can't clip it.
+   implementation. Edge-to-edge via the Full Width footer row, like the
+   newsletter band (no 100vw; see .pm-footer__newsletter).
 
    Glyphs are positioned on a computed grid in canvas, so this needs no
    monospace face and stays inside the two-family rule. The script that
@@ -525,8 +522,6 @@
    ===================================================================== */
 .pm-footer .pm-signal-band {
   position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
   background: var(--pm-c-white);
   height: 132px;
   overflow: hidden;
