@@ -89,8 +89,10 @@ WordPress instance or on decisions outside this repo — search
   Once the page exists, swap the `<span>` for an `<a href="...">` in
   `index.html` (same list markup, just change the tag) — search for
   `pm-footer__nav-pending` to find it.
-- **Social links** — all four (YouTube, Bluesky, GitHub, LinkedIn) are
-  confirmed handles/URLs.
+- **Social links** — all five (YouTube, Bluesky, GitHub, LinkedIn,
+  Instagram) are confirmed handles/URLs. Instagram's glyph is drawn with
+  `stroke="currentColor"` rather than `fill`, so the same colour and
+  hover-flash rules apply to it.
 
 ## Previewing locally
 

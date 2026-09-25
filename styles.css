@@ -275,11 +275,24 @@
    it, which already fade). See README -> Hyperlinks. */
 .pm-footer__email:hover { opacity: 0.7; }
 
+/* Even visible spacing: each mark fills its square differently (YouTube
+   edge to edge, LinkedIn's "in" about 3px short on each side), so an even
+   CSS gap left uneven gaps between the glyphs themselves (16-20px). The
+   gap is 0 and each icon after the first gets its own left margin, worked
+   out from the glyph's measured edges so every ink-to-ink gap is 18px.
+   Recalculate if an icon or its size changes:
+   margin = 18 - (previous glyph's right inset) - (this glyph's left inset).
+   Browsers snap each icon to whole pixels, so on screen the gaps land
+   within half a pixel of 18px either way. */
 .pm-footer__social {
   display: flex;
   align-items: center;
-  gap: var(--pm-space-200);
+  gap: 0;
 }
+.pm-footer__social .pm-footer__social-link--bluesky   { margin-left: 16.16px; } /* 18 - 0 (YouTube) - 1.84 */
+.pm-footer__social .pm-footer__social-link--github    { margin-left: 18.55px; } /* 18 + 1.03 (Bluesky overhangs its box) - 0.48 */
+.pm-footer__social .pm-footer__social-link--linkedin  { margin-left: 14.45px; } /* 18 - 0.48 - 3.07 */
+.pm-footer__social .pm-footer__social-link--instagram { margin-left: 13.21px; } /* 18 - 3.35 - 1.44 */
 
 /* Same specificity fix as .pm-footer__email above — scoped under
    .pm-footer__social so it beats the `.pm-footer a { color:
@@ -298,9 +311,9 @@
 
 .pm-footer__social-link svg { width: 23px; height: 23px; transition: fill 0.15s; }
 /* Bluesky's glyph sits in a tighter bounding box than the other
-   three marks — sized down to match, per the Figma spec, so all
-   four read as the same visual weight in the row. */
-.pm-footer__social-link--bluesky svg { width: 16px; height: 16px; }
+   marks — sized down to match, per the Figma spec, so all
+   five read as the same visual weight in the row. */
+.pm-footer__social-link--bluesky svg { width: 16px; height: 16px; overflow: visible; } /* its right wing runs ~1px past the viewBox and was being clipped */
 
 /* Hover/focus: flash-cycle through the brand gradient's own two
    stops (purple → red-orange → purple, looping) instead of just a
