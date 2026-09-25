@@ -76,7 +76,7 @@ WordPress instance or on decisions outside this repo — search
 - **Nav link slugs** — root-relative, and checked against the live
   mediated.upenn.edu nav on 2026-09-22: `/research-compendium/`,
   `/llm-civic-discourse/`, `/grants-overview/`, `/about/`,
-  `/team-leadership/`, `/team-faculty/`, `/team-job-openings/`,
+  `/team-leadership/`, `/faculty/`, `/job-openings/`,
   `/events/`, `/data/`, `/grants-rfp/`, `/event-registration/`.
   The new site's slugs follow the repo names, so `/team/`, `/faculty/`,
   `/job-openings/` and `/grants/` — which earlier drafts of this footer
