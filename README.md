@@ -2,20 +2,27 @@
 
 Hand-coded HTML/CSS for the sitewide footer on the new mediated.upenn.edu
 WordPress site — built as a plain `index.html` + `styles.css` pair, the
-same direct-to-disk convention the other PennMEDIATED page repos use
-(`home`, `about`, `grants`, `data`, `team-leadership`), not a page-builder
-module. See "Installing in WordPress" below for how this
-actually reaches the live site.
+same `index.html` + `styles.css` convention the other PennMEDIATED page
+repos use (`home`, `about`, `grants`, `data`, `team-leadership`). Unlike
+them, this repo is a **fragment, not a page**, and nothing serves it: it
+reaches the live site only as a manual paste into Divi. See "Installing in
+WordPress" below.
 
 Footers are mostly static (links, social icons, copyright), so — unlike
 the header/nav, which stays wired to WordPress's native menu system for
-easy wp-admin editing — this one is fully hardcoded. Updates go through
-git, not wp-admin: edit here, commit, push to GitHub, then `git pull` on
-the eniac deploy target.
+easy wp-admin editing — this one is fully hardcoded. GitHub is the source
+of truth, but it is **not** the delivery mechanism: edit here, commit, push,
+and then re-paste by hand into Divi (both destinations below). This is the
+one place in the system where a direct Divi edit can silently diverge from
+GitHub.
 
 ## What's in this repo
 
-- **`index.html`** — the `<footer>` markup, linking `styles.css`.
+- **`index.html`** — the `<footer>` markup. Deliberately carries **no
+  `<link>` to `styles.css`**: it is pasted into a Code module on a
+  WordPress page, so a relative href would resolve against the page URL
+  and 404 sitewide. To preview locally, add the link temporarily and
+  remove it before committing.
 - **`styles.css`** — all of the footer's CSS (scoped under
   `.pm-footer`, all custom properties prefixed `--pm-*`). Split out
   from `index.html` to match the convention the other PennMEDIATED
@@ -53,17 +60,25 @@ are duplicated, not shared, across repos (same discipline `home` and
 
 ## Installing in WordPress
 
-The site runs **Divi**. This repo has one delivery
-destination for the static pages, the same mechanism
-as every other PennMEDIATED page repo (`about`, `grants`, `data`,
-`team-leadership`, `home`):
+The site runs **Divi 5**. There is **no automated delivery** — earlier
+drafts of this file described a GitHub webhook + `git pull` + Apache SSI
+include. That mechanism was designed but never built, and the footer has
+never reached the site that way. Ignore it.
 
-A GitHub webhook triggers `git pull` on eniac, cloned into place at
-the path the static pages are served from. Each static page pulls
-this footer in via an Apache Server-Side Include
-(`<!--#include virtual="..." -->`), the same way they already
-include the shared nav. Automated once wired up — a `git pull` here
-*is* the deploy, no manual copy-paste step after.
+What actually happens, and it is **two pastes, not one**:
+
+1. **Markup** → Divi → Theme Builder → the global footer template → the
+   **Code module**. Paste the whole of `index.html` (comments and all are
+   fine; they do not render).
+2. **CSS** → Divi → Theme Options → **Custom CSS**. Paste the whole of
+   `styles.css`. Divi compiles this into its generated
+   `et-core-unified-<id>.min.css` bundle, which is where the footer's
+   styles actually come from on the live site — verified 2026-10-02.
+3. **Clear Divi's static CSS cache** afterwards, or the old bundle keeps
+   being served and step 2 appears to have done nothing.
+
+Both steps are required on every change. Forgetting step 2 is silent: the
+markup updates and the styling does not.
 
 Confirm the "Before you ship" items below, then preview a real page.
 
@@ -78,11 +93,16 @@ WordPress instance or on decisions outside this repo — search
   `/llm-civic-discourse/`, `/grants-overview/`, `/about/`,
   `/team-leadership/`, `/faculty/`, `/job-openings/`,
   `/events/`, `/data/`, `/grants-rfp/`, `/event-registration/`.
-  The new site's slugs follow the repo names, so `/team/`, `/faculty/`,
-  `/job-openings/` and `/grants/` — which earlier drafts of this footer
-  used — all 404 there. Because these are root-relative rather than
-  absolute URLs, a domain-wide find-and-replace will not catch them;
-  they have to be checked by hand against the live nav.
+  **Re-verified live 2026-10-02: all twelve return 200 with no redirect.**
+  Correcting an earlier claim here that `/team/`, `/faculty/`,
+  `/job-openings/` and `/grants/` all 404 — they do not. `/faculty/` and
+  `/job-openings/` are the real live slugs; `/team/` and `/grants/`
+  redirect correctly to `/team-leadership/` and `/grants-overview/`. The
+  paths that actually 404 are `/team-faculty/` and `/team-job-openings/`
+  — i.e. the repo-name versions — so do NOT "fix" these to match repo
+  names. Because these are root-relative rather than absolute URLs, a
+  domain-wide find-and-replace will not catch them; check them by hand
+  against the live nav.
 - **One pending nav item** — "Democracy & Computational Narratives"
   (Research) has no page yet, so it is rendered as plain
   `<span class="pm-footer__nav-pending">` text instead of a dead link.

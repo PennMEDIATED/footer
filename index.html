@@ -6,12 +6,19 @@
   (home, about, grants, data, team-leadership) already use — see
   README.md "What's in this repo."
 
-  No page builder — the site runs Twenty Twenty-Five, a WordPress
-  block theme. This reaches the live site the
-  same way the other repos do: direct-to-disk via a GitHub webhook +
-  git pull, pulled into each static page via an Apache SSI include.
-  For WordPress-rendered pages it goes in the Footer template part as
-  a Custom HTML block. See README.md "Installing in WordPress".
+  The site runs Divi 5. This file is NOT served from anywhere — it
+  reaches the live site as a manual paste into a Divi Theme Builder
+  Code module in the global footer template, and styles.css is pasted
+  separately into Divi -> Theme Options -> Custom CSS. Two destinations,
+  both by hand, plus a static-CSS cache clear. See README.md
+  "Installing in WordPress" — do not assume the webhook/SSI mechanism
+  described in older drafts of this repo; it was never built.
+
+  Because the paste target is a Code module on a WordPress page, this
+  file carries NO <link> to styles.css: a relative href would resolve
+  against the page URL (mediated.upenn.edu/about/styles.css), 404 on
+  every page on the site, and style nothing. That link was here until
+  2026-10-02 and was doing exactly that on all 16 pages.
 
   Before going live, confirm every item under README.md "Before you
   ship" (nav links, pending pages, social URLs).
@@ -21,8 +28,6 @@
   this footer stays visually consistent with home/about and with
   whatever the header/nav work (built separately) lands on.
 -->
-<link rel="stylesheet" href="styles.css">
-
 <footer class="pm-footer">
 
   <!-- 0. Signal band — the buffer above the footer proper.
