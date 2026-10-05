@@ -1,0 +1,81 @@
+/* =============================================================================
+   Divi -> Theme Options -> Custom CSS: everything in that field that is NOT
+   the footer.
+
+   That one field holds this file followed by styles.css. Divi compiles the
+   whole field into its generated et-core-unified-<id>.min.css bundle. Until
+   2026-10-05 only the footer half was in git; the rules in sections 1 and 2
+   below were copied back out of the live bundle so the field can be rebuilt
+   from the repo. To update the field: select all, delete, paste this file,
+   then paste styles.css beneath it, save, and clear Divi's static CSS cache.
+   ============================================================================= */
+
+
+/* ── 1. Header: logo size and sticky shrink (Menu module, Theme Builder header) ──
+   Copied verbatim from the live bundle 2026-10-05. The menu module is set to
+   sticky in Divi; once it sticks, its links and logo shrink. */
+.et_pb_menu_0_tb_header .et_pb_menu_inner_container > .et_pb_menu__logo-wrap { width: 250px; }
+.et_pb_menu_0_tb_header .et_pb_menu__logo { width: 220px; }
+@media (max-width: 980px) {
+  .et_pb_menu_0_tb_header .et_pb_menu_inner_container > .et_pb_menu__logo-wrap { width: 220px; }
+  .et_pb_menu_0_tb_header .et_pb_menu__logo { width: 190px; }
+}
+.et_pb_menu_0_tb_header .et_pb_menu__logo,
+.et_pb_menu_0_tb_header .et-menu > li > a { transition: width 0.25s ease, padding 0.25s ease; }
+.et_pb_menu_0_tb_header.et_pb_sticky--top .et-menu > li > a { padding-top: 16px; padding-bottom: 16px; }
+.et_pb_menu_0_tb_header.et_pb_sticky--top .et_pb_menu__logo { width: 170px; }
+
+
+/* ── 2. Page embeds ──
+   Removes the 4-6px inline-baseline gap under every embedded page. Keyed to
+   .et_pb_code so a new page repo needs nothing extra. */
+.et_pb_code iframe { display: block; width: 100%; border: 0; }
+
+
+/* ── 3. Mobile menu (hamburger) ──
+   Two problems with Divi's own behaviour, both measured on the live site:
+
+   a) Lower items unreachable. The Menu module is sticky, so once the page
+      has scrolled the dropdown is pinned to the screen with it. All 17 items
+      open as one 531px panel; on any screen shorter than ~580px (and every
+      phone in landscape) the bottom of it hung off the screen, and since it
+      was pinned, scrolling only moved the page behind it. The panel is now
+      capped to the space below the header and scrolls on its own;
+      overscroll-behavior stops a scroll that reaches its end from moving the
+      page underneath.
+
+   b) Glitchy open/close. Divi animates the panel open and shut with jQuery
+      slideDown/slideUp at a fixed 500ms, growing its height a frame at a
+      time with items clipped mid-line as it goes. The class Divi toggles on
+      .mobile_nav (opened/closed) changes the instant the button is tapped,
+      so keying display to that class makes the panel appear and disappear
+      immediately; the !important height and padding stop jQuery's inline
+      animation values from showing through while it runs out in the
+      background. A 0.18s fade replaces the slide (none with reduced motion).
+
+   60px = the panel's top edge (48px below the top of the screen) plus a
+   12px gap. Logged in, WordPress's mobile admin bar adds 46px. */
+.et-l--header .mobile_nav.opened .et_mobile_menu {
+  display: block !important;
+  height: auto !important;
+  padding-top: 5% !important;
+  padding-bottom: 5% !important;
+  max-height: calc(100vh - 60px);
+  max-height: calc(100dvh - 60px);
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  animation: pm-menu-in 0.18s ease-out;
+}
+body.admin-bar .et-l--header .mobile_nav.opened .et_mobile_menu {
+  max-height: calc(100vh - 106px);
+  max-height: calc(100dvh - 106px);
+}
+.et-l--header .mobile_nav.closed .et_mobile_menu { display: none !important; }
+@keyframes pm-menu-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .et-l--header .mobile_nav.opened .et_mobile_menu { animation: none; }
+}

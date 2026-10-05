@@ -23,6 +23,7 @@ GitHub.
   WordPress page, so a relative href would resolve against the page URL
   and 404 sitewide. To preview locally, add the link temporarily and
   remove it before committing.
+- **`theme-options.css`** — the non-footer rules that share Divi's Theme Options → Custom CSS field with `styles.css`: header logo and sticky-shrink sizes, the page-embed gap fix, and the mobile-menu fix. Kept here so the whole field can be rebuilt from git.
 - **`styles.css`** — all of the footer's CSS (scoped under
   `.pm-footer`, all custom properties prefixed `--pm-*`). Split out
   from `index.html` to match the convention the other PennMEDIATED
@@ -70,10 +71,15 @@ What actually happens, and it is **two pastes, not one**:
 1. **Markup** → Divi → Theme Builder → the global footer template → the
    **Code module**. Paste the whole of `index.html` (comments and all are
    fine; they do not render).
-2. **CSS** → Divi → Theme Options → **Custom CSS**. Paste the whole of
-   `styles.css`. Divi compiles this into its generated
-   `et-core-unified-<id>.min.css` bundle, which is where the footer's
-   styles actually come from on the live site — verified 2026-10-02.
+2. **CSS** → Divi → Theme Options → **Custom CSS**. That field is shared:
+   it holds `theme-options.css` (the header/sticky rules, the page-embed
+   rule and the mobile-menu fix — everything that isn't the footer)
+   followed by `styles.css`. Select all, delete, paste `theme-options.css`,
+   then paste `styles.css` beneath it. **Never paste `styles.css` alone over
+   the whole field** — that deletes the header and mobile-menu rules. Divi
+   compiles the field into its generated `et-core-unified-<id>.min.css`
+   bundle, which is where these styles actually come from on the live
+   site — verified 2026-10-02 and 2026-10-05.
 3. **Clear Divi's static CSS cache** afterwards, or the old bundle keeps
    being served and step 2 appears to have done nothing.
 
