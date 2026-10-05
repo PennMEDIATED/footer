@@ -29,6 +29,7 @@
 /* ── 2. Page embeds ──
    Removes the 4-6px inline-baseline gap under every embedded page. Keyed to
    .et_pb_code so a new page repo needs nothing extra. */
+/*DO NOT DELETE for universal iframe adjustment*/
 .et_pb_code iframe { display: block; width: 100%; border: 0; }
 
 
