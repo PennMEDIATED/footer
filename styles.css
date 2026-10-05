@@ -518,6 +518,20 @@
      site, so it renders as exported. Confirmed correct. */
 }
 
+/* Phones and small tablets: "Supported by" on its own line, the Knight and
+   Penn logos side by side beneath it. The three items need ~457px on one row
+   (label 111 + Knight 183 + Penn 131 + gaps), so below that plain wrapping
+   left Knight beside the label and Penn alone on the next line, tucked under
+   the label. Forcing the label to a full row keeps the two logos together;
+   44px tall, the pair is ~280px wide and fits a 360px phone. Only below
+   ~330px of content do they stack, one above the other. */
+@media (max-width: 600px) {
+  .pm-footer__bottom-supporters { row-gap: var(--pm-space-150); }
+  .pm-footer__bottom-supporters .pm-footer__bottom-supporters-label { flex-basis: 100%; }
+  .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--knight,
+  .pm-footer__bottom-supporters-logo-link img.pm-footer__bottom-supporters-logo--upenn { height: 44px; }
+}
+
 /* ── Signal band ──────────────────────────────────────────────────────────
    The buffer strip above the footer proper: fills the gap so a page's last
    colour section is never flush against the footer gradient. Cursor-reactive
