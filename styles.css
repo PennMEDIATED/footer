@@ -187,6 +187,30 @@
 
 .pm-footer__newsletter-submit:hover { opacity: 0.85; }
 
+/* Donate button, brand column. Deliberately the same white box as
+   Subscribe above (height, padding, type, radius, hover) so the footer's
+   two calls to action read as a pair. Chained under .pm-footer__brand for
+   the same reason as the email link: a single class ties with
+   .pm-footer a { color: inherit }. */
+.pm-footer__brand .pm-footer__donate {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--pm-space-500);
+  padding-inline: var(--pm-space-300);
+  background: var(--pm-c-white);
+  color: var(--pm-c-dark);
+  font-family: var(--pm-f-sans);
+  font-size: var(--pm-fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.24px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.pm-footer__brand .pm-footer__donate:hover { opacity: 0.85; }
+
 /* ===================================================================
    2. Main footer — dark band
    =================================================================== */
